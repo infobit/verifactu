@@ -693,7 +693,7 @@ class account_invoice(models.Model):
         """
         return {
             "NombreRazon": _("Asoc Española de Odoo"),
-            "NIF": "G87846952",
+            "NIF": "",
             "NombreSistemaInformatico": "odoo",
             "IdSistemaInformatico": "11",
             "Version": "1.0",
