@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_invoice_verifactu_qr" inherit_id="account.report_invoice_document">
+             <xpath expr="//div[@class='row']" position="before">
+             <div  style="-webkit-writing-mode:horizontal-lr; font-size:10px;position:absolute; z-index:0;">
+                <!--<div id="l10n_es_verifactu_id" class="row text-center">
+                    <div class="mt32 w-100">
+                        <strong>Verifactu QR</strong>
+                    </div>
+                </div>-->
+                <div id="l10n_es_verifactu_qr" class="row text-center">
+                    <strong>Verifactu QR</strong>
+                    <div class="mb32 w-100">
+                        <t t-if="o.qr_image">
+                             <img t-att-src="'data:image/png;base64,%s' % o.qr_image" style="width:40mm;height:40mm;"/>
+                        </t>
+                    </div>
+                    <p><strong>Factura verificable en la sede electrónica de la AEAT</strong></p>
+                </div>
+              </div>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+            </xpath>
+        </template>
+    </data>
+</openerp>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_invoice_from_ref" model="ir.ui.view">
+            <field name="name">Invoice (hash)</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <button name="invoice_open" position="after">
+                 <button
+                    type="object"
+                    string="Send to Verifactu"
+                    name="send_verifactu"
+                    groups="l10n_es_aeat.group_account_aeat"
+                    attrs="{'invisible': ['|','|',('verifactu_enabled', '=', False), ('state', 'not in', ['open']), ('verifactu_state','in',['sent','cancelled'])]}"
+                 />
+                 <button
+                    type="object"
+                    string="Send cancellation to Verifactu"
+                    name="cancel_verifactu"
+                    groups="l10n_es_aeat.group_account_aeat"
+                    attrs="{'invisible': ['|','|',('verifactu_enabled', '=', False), ('state', 'not in', ['cancel']), ('verifactu_state', 'not in', ['sent','sent_w_errors','sent_modified'])]}"
+                 />
+                 </button>
+                 <notebook position="inside">
+                    <page string="Veri*FACTU" name="group_aeat_verifactu">
+                    <notebook>
+                     <page name="page_aeat_result_general" string="Veri*FACTU Result" >
+                          <group>
+                             <field name="verifactu_state"/>
+                             <field name="verifactu_csv"/>
+                             <field name="verifactu_send_failed"/>
+                             <field name="verifactu_send_error"/>
+                            <!--attrs="{'invisible': [('verifactu_send_failed', '=', False)]}"-->
+                          </group>
+                     </page>
+                     <page name="page_aeat_result_technical" string="Technical" groups="base.group_no_one">
+                          <group>
+                            <field name="verifactu_return"/>
+                            <field name="verifactu_header_sent" />
+                            <field name="verifactu_content_sent" />
+                          </group>
+                     </page>
+                     <page string="Veri*FACTU Information" name="page_aeat" attrs="{'invisible': [('verifactu_enabled', '=', False)]}">
+                      <group string="Veri*FACTU Information" name="group_aeat_information">
+                        <field name="verifactu_enabled" invisible="0" readonly="1" />
+                        <field name="verifactu_description" />
+                        <field name="verifactu_refund_type" />
+                        <field name="verifactu_refund_specific_invoice_type" />
+                        <field name="verifactu_tax_key" />
+                        <field name="verifactu_registration_key" />
+                        <field name="verifactu_hash_string" />
+                        <field name="verifactu_hash" />
+                        <field name="verifactu_macrodata"/>
+                        <field name="verifactu_qr_url"/>
+                        <field name="qr_image"/>
+                      </group>
+                     </page>
+                    </notebook>
+                   </page>   
+                </notebook>
+            </field>
+        </record>
+        <!--
+           <button name="button_hash" type="object" string="Generar Hash" class="oe_highlight"/>
+                    <field name="restrict_mode_hash_table"/>
+                    <field name="secure_sequence_number"/>
+                    <field name="inalterable_hash"/>
+                    <field name="string_to_hash"/>
+        -->
+        <!--<record id="view_invoice_filter_ref" model="ir.ui.view">
+            <field name="name">Invoice (partner reference)</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="partner_ref"/>
+                </field>
+                <filter string="Partner" position="after">
+                  <filter string="Referencia de contacto" icon="terp-partner" context="{'group_by':'partner_ref'}"/>
+                </filter>
+            </field>
+        </record>
+        <record id="view_invoice_tree_ref" model="ir.ui.view">
+            <field name="name">Invoice (ruta)</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="partner_ref"/>
+                </field>
+            </field>
+        </record>-->
+    </data>
+</openerp>
+

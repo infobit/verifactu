@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record id="sp1" model="ir.config_parameter">
+            <field name="key">l10n_es_aeat_verifactu.publicCrt</field>
+            <field name="value">""</field>
+        </record>
+        <record id="sp2" model="ir.config_parameter">
+            <field name="key">l10n_es_aeat_verifactu.privateKey</field>
+            <field name="value">""</field>
+        </record>
+	
+    </data>
+</openerp>

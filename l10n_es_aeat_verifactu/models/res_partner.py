@@ -1,0 +1,29 @@
+# Copyright 2024 Aures TIC - Jose Zambudio
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+from openerp import api, fields, models
+
+
+class ResPartner(models.Model):
+    _inherit = "res.partner"
+
+    #verifactu_enabled = fields.Boolean(
+    #    compute="_compute_aeat_sending_enabled",
+    #)
+    aeat_simplified_invoice = fields.Boolean("AEAT Simplified Invoice")
+
+    """@api.multi
+    @api.depends("company_id")
+    def _compute_aeat_sending_enabled(self):
+        res = super()._compute_aeat_sending_enabled()
+        verifactu_enabled = any(self.env.companies.mapped("verifactu_enabled"))
+        for partner in self:
+            verifactu_enabled = (
+                partner.company_id.verifactu_enabled
+                if partner.company_id
+                else verifactu_enabled
+            )
+            partner.verifactu_enabled = verifactu_enabled
+            if verifactu_enabled:
+                partner.aeat_sending_enabled = True
+        return res"""

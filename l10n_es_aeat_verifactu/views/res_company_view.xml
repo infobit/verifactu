@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2024 Jose Zambudio <jose@aurestic.es> ç
+    License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<openerp>
+  <data>
+    <record id="view_company_verifactu_form" model="ir.ui.view">
+        <field name="name">res.company.verifactu.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form" />
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page name="verifactu" string="veri*FACTU">
+                    <group>
+                       <field name="tax_agency_id"/>
+                    </group>
+                    <separator
+                        name="aeat_verifactu_config"
+                        string="AEAT veri*FACTU Configuration"
+                    />
+                    <group name="verifactu_enabled">
+                        <field name="verifactu_enabled" />
+                    </group>
+                    <group attrs="{'invisible': [('verifactu_enabled', '=', False)]}">
+                        <group name="verifactu_config">
+                            <field name="verifactu_test" />
+                        </group>
+                    </group>
+                    <group attrs="{'invisible': [('verifactu_enabled', '=', False)]}">
+                        <group name="verifactu_description">
+                            <field name="verifactu_description" />
+                        </group>
+                    </group>
+                    <group>
+                       <group name="QR Invoice">
+                         <field name="url_qrverifactu"/>
+                         <field name="url_qrverifactu_test"/>
+                         <field name="url_qrnoverifactu"/>
+                         <field name="url_qrnoverifactu_test"/>
+                       </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+  </data>
+</openerp>

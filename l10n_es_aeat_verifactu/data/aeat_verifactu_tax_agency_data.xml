@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2024 Jose Zambudio <jose@aurestic.es>
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<openerp>
+   <data noupdate="0">
+    <record id="l10n_es_aeat_verifactu.aeat_tax_agency_spain" model="aeat.tax.agency">
+        <field
+            name="verifactu_wsdl_out"
+        >https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SistemaFacturacion.wsdl</field>
+        <field
+            name="verifactu_wsdl_out_test_address"
+        >https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP</field>
+    </record>
+   </data>
+</openerp>
