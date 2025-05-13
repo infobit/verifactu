@@ -20,6 +20,7 @@ Verifactu - Invoice.
         "data/aeat_verifactu_registration_keys.xml",
         "data/aeat_verifactu_map_data.xml",
         "data/parameters.xml",
+        #"data/ir_cron.xml",
         #'security/account_security.xml',
         #'security/ir.model.access.csv',
         "views/certificate_verifactu_view.xml",

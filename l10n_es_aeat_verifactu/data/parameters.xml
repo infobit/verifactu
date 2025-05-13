@@ -9,6 +9,9 @@
             <field name="key">l10n_es_aeat_verifactu.privateKey</field>
             <field name="value">""</field>
         </record>
-	
+        <record id="verifactu_batch" model="ir.config_parameter">
+          <field name="key">l10n_es_aeat_verifactu.verifactu_batch</field>
+          <field name="value">50</field>
+        </record>	
     </data>
 </openerp>

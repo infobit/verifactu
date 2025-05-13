@@ -10,11 +10,11 @@ from hashlib import sha256
 from requests import Session
 
 from openerp import _, api, fields, models
-from openerp.exceptions import ValidationError
+from openerp.exceptions import UserError, ValidationError
 from openerp.modules.registry import Registry
 from openerp.tools.float_utils import float_compare
 
-from openerp.addons.l10n_es_aeat_verifactu.models.aeat_mixin import round_by_keys
+from openerp.addons.l10n_es_aeat.models.aeat_mixin import round_by_keys
 
 _logger = logging.getLogger(__name__)
 
@@ -39,11 +39,11 @@ class VerifactuMixin(models.AbstractModel):
         string="Enable AEAT",
         compute="_compute_verifactu_enabled",
     )
-    verifactu_hash_string = fields.Char(copy=False)
-    verifactu_hash = fields.Char(copy=False)
+    verifactu_hash_string = fields.Char(compute="_compute_verifactu_hash")
+    verifactu_hash = fields.Char(compute="_compute_verifactu_hash")
     verifactu_refund_type = fields.Selection(
         selection=[
-            ('S', 'By substitution'),
+            # ('S', 'By substitution'), - en sii no está soportado, aquí igual?
             ("I", "By differences"),
         ],
         compute="_compute_verifactu_refund_type",
@@ -79,29 +79,6 @@ class VerifactuMixin(models.AbstractModel):
         readonly=True,
         string="Verifactu Code",
     )
-    verifactu_qr_url = fields.Char(string="Verifactu QR URL") #, compute="_compute_ve$
-    qr_image = fields.Binary("Image QRL Invoice")
-    verifactu_previous_document_id = fields.Reference(
-        string="Previous Verifactu Document",
-        selection="_selection_verifactu_reference_models",
-        #readonly=True,
-        copy=False,
-    )
-    verifactu_next_document_id = fields.Reference(
-        string="Next Verifactu Document",
-        selection="_selection_verifactu_reference_models",
-        #readonly=True,
-        copy=False,
-    )
-    verifactu_send_date = fields.Datetime(index=True, copy=False)
-
-    @api.model
-    def _selection_verifactu_reference_models(self):
-        # this method is used to define the models that can be used as
-        # previous documents in the verifactu mixin
-        # it can be inherited to add others models if needed like pos.order
-        return [("account.invoice", "Invoice")]
-
 
     def _compute_verifactu_enabled(self):
         raise NotImplementedError
@@ -116,56 +93,6 @@ class VerifactuMixin(models.AbstractModel):
                 )
                 >= 0
             )
-
-    def _compute_verifactu_qr_url(self):
-        """Returns the URL to be used in the QR code. A sample URL would be (urlencoded):
-        https://prewww2.aeat.es/wlpl/TIKECONT/ValidarQR?nif=89890001K&numserie=12345678%26G33&fecha=01-01-2024&importe=241.4
-        """  # noqa: B950
-        for record in self:
-            agency = self.env.ref("l10n_es_aeat.aeat_tax_agency_spain")
-            if record.company_id.verifactu_test:
-                qr_base_url = agency.verifactu_qr_base_url_test_address
-            else:
-                qr_base_url = agency.verifactu_qr_base_url
-
-            qr_values = record._get_verifactu_qr_values()
-
-            # Check all values are ASCII between 32 and 126
-            for value in qr_values.values():
-                try:
-                    str(value).encode("ascii")
-                except UnicodeEncodeError as uee:
-                    raise UserError(
-                        _("QR URL value '{}' is not ASCII").format(value)
-                    ) from uee
-
-            # Build QR URL
-            qr_url = "{}?{}".format(
-                qr_base_url,
-                urlencode(qr_values, encoding="utf-8"),
-            )
-
-            record.verifactu_qr_url = qr_url
-
-    def _compute_verifactu_qr(self):
-        # If qrcode module is not available, we can't generate QR codes
-        if not qrcode:
-            _logger.error("qrcode module is not available")
-            return
-        for record in self:
-            if record.state != "posted" or not record.verifactu_enabled:
-                record.verifactu_qr = False
-                continue
-            qr = qrcode.QRCode(
-                border=0, error_correction=qrcode.constants.ERROR_CORRECT_M
-            )
-            qr.add_data(record.verifactu_qr_url)
-            qr.make()
-            img = qr.make_image()
-            with io.BytesIO() as temp:
-                img.save(temp, format="PNG")
-                record.verifactu_qr = base64.b64encode(temp.getvalue())
-
 
     @api.model
     def _get_verifactu_tax_keys(self):
@@ -356,7 +283,7 @@ class VerifactuMixin(models.AbstractModel):
             try:
                 inv_dict = document._get_verifactu_invoice_dict()
             except Exception as fault:
-                raise ValidationError(fault)
+                raise ValidationError(fault) from fault
             try:
                 mapping_key = document._get_mapping_key()
                 serv = document._connect_verifactu(mapping_key)
@@ -409,7 +336,7 @@ class VerifactuMixin(models.AbstractModel):
                 document.write(doc_vals)
                 new_cr.commit()
                 new_cr.close()
-                raise ValidationError(fault)
+                raise ValidationError(fault) from fault
 
     def _connect_verifactu(self, mapping_key):
         # de momento no puedo el _connect_aeat del aeat_mixin porque si no pongo
@@ -464,18 +391,18 @@ class VerifactuMixin(models.AbstractModel):
         ).taxes
         return self.company_id.get_taxes_from_templates(tax_templates)
 
-    @api.depends("fiscal_position")
+    @api.depends("fiscal_position_id")
     def _compute_verifactu_tax_key(self):
         for document in self:
             document.verifactu_tax_key = (
-                document.fiscal_position.verifactu_tax_key or "01"
+                document.fiscal_position_id.verifactu_tax_key or "01"
             )
 
-    @api.depends("fiscal_position")
+    @api.depends("fiscal_position_id")
     def _compute_verifactu_registration_key(self):
         for document in self:
-            if document.fiscal_position:
-                key = document.fiscal_position.verifactu_registration_key
+            if document.fiscal_position_id:
+                key = document.fiscal_position_id.verifactu_registration_key
                 if key:
                     document.verifactu_registration_key = key
             else:

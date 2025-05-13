@@ -51,6 +51,9 @@
                         <field name="verifactu_registration_key" />
                         <field name="verifactu_hash_string" />
                         <field name="verifactu_hash" />
+                        <field name="verifactu_registration_date" readonly="1" />
+                        <field name="verifactu_previous_document_id" />
+                        <field name="verifactu_next_document_id" />
                         <field name="verifactu_macrodata"/>
                         <field name="verifactu_qr_url"/>
                         <field name="qr_image"/>
