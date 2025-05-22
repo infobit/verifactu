@@ -49,7 +49,7 @@ VERIFACTU_VALID_INVOICE_STATES = ["open", "paid"]
 
 
 class account_invoice(models.Model):
-    _inherit = ["account.invoice"] #, "verifactu.mixin"]
+    _inherit = ["account.invoice"]
 
     verifactu_enabled = fields.Boolean(
         string="Enable AEAT",
@@ -65,10 +65,10 @@ class account_invoice(models.Model):
         string="VERIFACTU last content sent", copy=False, readonly=True,
     )
 
-    verifactu_hash_string = fields.Text("Verifactu HASH String") #compute="_compute_verifactu_hash")
-    verifactu_hash = fields.Char("Verifactu HASH") #compute="_compute_verifactu_hash")
-    verifactu_qr_url = fields.Char(string="Verifactu QR URL") #, compute="_compute_verifactu_qr_url")
-    qr_image = fields.Binary("Image QRL Invoice") #, compute="_compute_verifactu_qr_url", store=True)
+    verifactu_hash_string = fields.Text("Verifactu HASH String")
+    verifactu_hash = fields.Char("Verifactu HASH")
+    verifactu_qr_url = fields.Char(string="Verifactu QR URL")
+    qr_image = fields.Binary("Image QRL Invoice")
     
 
     verifactu_refund_type = fields.Selection(
@@ -136,13 +136,13 @@ class account_invoice(models.Model):
     verifactu_previous_document_id = fields.Reference(
         string="Previous Verifactu Document",
         selection="_selection_verifactu_reference_models",
-        #readonly=True,
+        readonly=True,
         copy=False,
     )
     verifactu_next_document_id = fields.Reference(
         string="Next Verifactu Document",
         selection="_selection_verifactu_reference_models",
-        #readonly=True,
+        readonly=True,
         copy=False,
     )
     verifactu_send_date = fields.Datetime(index=True, copy=False)
@@ -301,7 +301,7 @@ class account_invoice(models.Model):
         #    serial_number = self.thirdparty_number[0:60]
         return serial_number
 
-    def _get_verifactu_issuer(self): #infobit revisar
+    def _get_verifactu_issuer(self):
         return self.company_id.partner_id.vat[2:] #_parse_aeat_vat_info()[2]
 
     def _get_verifactu_amount_tax(self):
@@ -679,68 +679,6 @@ class account_invoice(models.Model):
             #raise Warning(move.qr_image)
             #move.qr_image = img.save("codigo_qr.png")
 
-    #CODIGO PRUEBAS - PARA BORRAR ******
-    """@api.one
-    def button_hash(self):
-        #raise Warning("Dentro")
-        hash = self._get_new_hash(secure_seq_number=2)
-        if hash:
-           self.write({'inalterable_hash': hash})"""
-
-    """@api.multi
-    def invoice_validate(self):
-        res = super(account_invoice, self).invoice_validate()
-        self._get_new_hash(secure_sequence_number) 
-        return return res"""
-
-
-    """def _get_new_hash(self, secure_seq_number):
-        self.ensure_one()
-        #get the only one exact previous move in the securisation sequence
-        prev_move = self.search([('state', '=', 'posted'),
-                                 ('company_id', '=', self.company_id.id),
-                                 ('journal_id', '=', self.journal_id.id),
-                                 ('secure_sequence_number', '!=', 0),
-                                 ('secure_sequence_number', '=', int(secure_seq_number) - 1)])
-        if prev_move and len(prev_move) != 1:
-            raise UserError(
-               _('An error occured when computing the inalterability. Impossible to get the unique previous posted journal entry.'))
-
-        #build and return the hash
-        return self._compute_hash(prev_move.inalterable_hash if prev_move else u'')"""
-
-    """def _compute_hash(self, previous_hash):
-        self.ensure_one()
-        valor = "IDEmisorFacturaAnulada=89890001K&NumSerieFacturaAnulada=12345679/G34&FechaExpedicionFacturaAnulada=01-01-2024&Huella=F7B94CFD8924EDFF273501B01EE5153E4CE8F259766F88CF6ACB8935802A2B97&FechaHoraHusoGenRegistro=2024-01-01T19:20:40+01:00"
-        hash_string = sha256(valor.encode('utf-8'))
-        #hash_string = sha256((previous_hash + self.string_to_hash).encode('utf-8'))
-        #raise Warning(hash_string.hexdigest())
-        return hash_string.hexdigest()"""
-
-    #@api.depends(lambda self: self._get_integrity_hash_fields_and_subfields())
-    #@api.depends_context('hash_version')
-    """def _compute_string_to_hash(self):
-        def _getattrstring(obj, field_str):
-            field_value = obj[field_str]
-            if obj._fields[field_str].type == 'many2one':
-                field_value = field_value.id
-            return str(field_value)
-
-        for move in self:
-            values = {}
-            for field in INTEGRITY_HASH_MOVE_FIELDS:
-                values[field] = _getattrstring(move, field)
-
-            for line in move.invoice_line:
-                for field in INTEGRITY_HASH_LINE_FIELDS:
-                    k = 'line_%d_%s' % (line.id, field)
-                    values[k] = _getattrstring(line, field)
-            #make the json serialization canonical
-            #  (https://tools.ietf.org/html/draft-staykov-hu-json-canonical-form-00)
-            move.string_to_hash = dumps(values, sort_keys=True,
-                                                ensure_ascii=True, indent=None,
-                                                separators=(',',':'))"""
-    #fin codigo pruebas infobit borrar
 
     def _compute_verifactu_macrodata(self):
         for document in self:
