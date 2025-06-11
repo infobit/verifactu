@@ -1,7 +1,7 @@
 # Copyright 2024 Aures TIC - Almudena de La Puente <almudena@aurestic.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import api, fields, models
+from odoo import api, fields, models
 
 class AeatVerifactuMappingRegistrationKeys(models.Model):
     _name = "aeat.verifactu.registration.keys"

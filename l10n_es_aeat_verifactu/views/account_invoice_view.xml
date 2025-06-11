@@ -6,7 +6,7 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
-                <button name="invoice_open" position="after">
+                <button name="action_invoice_open" position="after">
                  <button
                     type="object"
                     string="Send to Verifactu"
@@ -51,6 +51,9 @@
                         <field name="verifactu_registration_key" />
                         <field name="verifactu_hash_string" />
                         <field name="verifactu_hash" />
+                        <field name="verifactu_registration_date" readonly="1" />
+                        <field name="verifactu_previous_document_id" />
+                        <field name="verifactu_next_document_id" />
                         <field name="verifactu_macrodata"/>
                         <field name="verifactu_qr_url"/>
                         <field name="qr_image"/>

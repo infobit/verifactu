@@ -2,10 +2,10 @@
 ##############################################################################
 import itertools
 from lxml import etree
-from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
-from openerp.tools import float_compare
-import openerp.addons.decimal_precision as dp
+from odoo import models, fields, api, _
+from odoo.exceptions import except_orm, Warning, RedirectWarning
+from odoo.tools import float_compare
+import odoo.addons.decimal_precision as dp
 
 
 class account_journal(models.Model):
@@ -27,6 +27,8 @@ class account_journal(models.Model):
         store=True,
         compute="_compute_restrict_mode_hash_table",
     )
+
+    verifactu_enabled = fields.Boolean(string="Enable veri*FACTU", default=True)
 
     @api.depends(
         "company_id", "company_id.verifactu_enabled", "company_id.country_id", "type"

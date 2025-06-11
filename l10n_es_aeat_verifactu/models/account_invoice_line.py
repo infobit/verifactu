@@ -2,13 +2,13 @@
 ##############################################################################
 import itertools
 from lxml import etree
-from openerp import models, fields, api, _, SUPERUSER_ID, exceptions
-from openerp.exceptions import except_orm, Warning, RedirectWarning, ValidationError
-from openerp.tools import float_compare, ustr, float_round, float_compare
-import openerp.addons.decimal_precision as dp
+from odoo import models, fields, api, _, SUPERUSER_ID, exceptions
+from odoo.exceptions import except_orm, Warning, RedirectWarning, ValidationError
+from odoo.tools import float_compare, ustr, float_round, float_compare
+import odoo.addons.decimal_precision as dp
 from hashlib import sha256
 from json import dumps
-from openerp.modules.registry import Registry
+from odoo.modules.registry import Registry
 import logging
 import json
 import pytz
@@ -21,10 +21,12 @@ try:
    from zeep.transports import Transport
 except (ImportError, IOError) as err:
     _logger.debug(err)
-from urlparse import urlparse #urlencode
+#from urlparse import urlparse #urlencode
+from urllib.parse import urlparse
 from base64 import b64encode, b64decode
 import qrcode
-from cStringIO import StringIO
+#from cStringIO import StringIO
+from io import StringIO
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'

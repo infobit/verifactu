@@ -9,9 +9,14 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='ref']" position="after">
             <!--<xpath expr="//field[@name='aeat_sending_enabled']" position="after">-->
-                <!--<field name="verifactu_enabled" invisible="1" />-->
                 <field name="aeat_simplified_invoice"/>
+                <field name="aeat_identification_type" />
+                        <field
+                            name="aeat_identification"
+                            attrs="{'required': [('aeat_identification_type', '!=', False)], 'invisible': [('aeat_identification_type', '=', False)]}"
+                        />
             </xpath>
+            
         </field>
     </record>
   </data>

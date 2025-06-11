@@ -1,1 +1,1 @@
-import aeat_verifactu_password
+from . import aeat_verifactu_password

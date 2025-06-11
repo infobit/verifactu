@@ -2,7 +2,7 @@
 # (c) 2017 Diagram Software S.L.
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from openerp import api, models, fields, _
+from odoo import api, models, fields, _
 
 
 class CertificateVerifactu(models.Model):
@@ -47,15 +47,15 @@ class CertificateVerifactu(models.Model):
             ('company_id', '=', self.company_id.id),
         ]).write({'state': 'draft'})
         self.state = 'active'
-        """if self.public_key:
-	    verifactu_crt = self.env['ir.config_parameter'].search([('key','=','l10n_es_aeat_verifactu.publicCrt')])
+        if self.public_key:
+            verifactu_crt = self.env['ir.config_parameter'].search([('key','=','l10n_es_aeat_verifactu.publicCrt')])
             #sii_crt = self.env.ref('l10n_es_aeat_verifactu.publicCrt')
             verifactu_crt.value = self.public_key
         if self.private_key:
-	    verifactu_key = self.env['ir.config_parameter'].search([('key','=','l10n_es_aeat_verifactu.privateKey')])
+            verifactu_key = self.env['ir.config_parameter'].search([('key','=','l10n_es_aeat_verifactu.privateKey')])
             #sii_key = self.env.ref('l10n_es_aeat_verifactu.privateKey')
             verifactu_key.value = self.private_key
         other_configs = self.search([('id', '!=', self.id)])
         for config_id in other_configs:
             config_id.state = 'draft'
-        self.state = 'active'"""
+        self.state = 'active'

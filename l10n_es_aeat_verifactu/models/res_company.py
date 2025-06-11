@@ -5,11 +5,11 @@ from lxml import etree
 
 import logging
 
-from openerp import models, fields, api, _
-from openerp.exceptions import except_orm, Warning, RedirectWarning
-from openerp.tools import float_compare
-import openerp.addons.decimal_precision as dp
-from openerp.tools import ormcache
+from odoo import models, fields, api, _
+from odoo.exceptions import except_orm, Warning, RedirectWarning
+from odoo.tools import float_compare
+import odoo.addons.decimal_precision as dp
+from odoo.tools import ormcache
 _logger = logging.getLogger(__name__)
 
 class res_company(models.Model):
@@ -23,7 +23,40 @@ class res_company(models.Model):
     url_qrverifactu = fields.Char(string="Url QR Verifactu", default="https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR?")
     url_qrnoverifactu_test = fields.Char(string="Url QR No Verifactu", default="https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQRNoVerifactu?")
     url_qrnoverifactu = fields.Char(string="Url QR No Verifactu", default="https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQRNoVerifactu?")
+    verifactu_last_document_id = fields.Reference(
+        string="Last Verifactu Document",
+        selection="_selection_verifactu_reference_models",
+        readonly=True,
+    )
+    verifactu_developer_id = fields.Many2one(
+        comodel_name="verifactu.developer",
+        string="Verifactu Developer",
+        ondelete="set null",
+    )
+    verifactu_start_date = fields.Date(
+        help="If this field is set, the verifactu won't be enabled on invoices with lower "
+        "invoice date. If not set, the verifactu can be enabled on all invoice dates"
+    )
 
+    @api.model
+    def _selection_verifactu_reference_models(self):
+        return self.env["account.invoice"]._selection_verifactu_reference_models()
+
+
+    def write(self, vals):
+        res = super(res_company, self).write(vals)
+        if "verifactu_enabled" in vals:
+            for company in self:
+                if vals.get("verifactu_enabled", False):
+                    journals = self.env["account.journal"].search(
+                        [
+                            ("company_id", "=", company.id),
+                            ("type", "=", "sale"),
+                        ]
+                    )
+                    if journals:
+                        journals.write({"verifactu_enabled": True})
+        return res
 
     def get_taxes_from_templates(self, tax_templates):
         """Return company taxes that match the given tax templates."""

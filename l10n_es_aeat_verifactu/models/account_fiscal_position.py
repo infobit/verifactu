@@ -4,7 +4,7 @@
 # Copyright 2024 Aures TIC - Almudena de La Puente <almudena@aurestic.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from openerp import api, fields, models
+from odoo import api, fields, models
 
 
 class AccountFiscalPosition(models.Model):
@@ -20,6 +20,12 @@ class AccountFiscalPosition(models.Model):
     verifactu_registration_key = fields.Many2one(
         "aeat.verifactu.registration.keys",
         ondelete="restrict",
+    )
+
+    verifactu_active = fields.Boolean(
+        copy=False,
+        default=True,
+        help="Enable Verifactu for this fiscal position?",
     )
 
     @api.model

@@ -2,7 +2,7 @@
 ############################################################################
 {
     'name' : 'Comunicación Veri*FACTU',
-    'version' : '8.0.1.0',
+    'version' : '11.0.1.0',
     'author' : 'OpenERP SA',
     'category' : 'Accounting & Finance',
     'description' : """
@@ -20,8 +20,8 @@ Verifactu - Invoice.
         "data/aeat_verifactu_registration_keys.xml",
         "data/aeat_verifactu_map_data.xml",
         "data/parameters.xml",
-        #'security/account_security.xml',
-        #'security/ir.model.access.csv',
+        "data/ir_cron.xml",
+        'security/ir.model.access.csv',
         "views/certificate_verifactu_view.xml",
         "views/aeat_tax_agency_view.xml",
         "views/account_fiscal_position_view.xml",
