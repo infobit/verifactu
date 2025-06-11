@@ -47,7 +47,7 @@ class CertificateVerifactu(models.Model):
             ('company_id', '=', self.company_id.id),
         ]).write({'state': 'draft'})
         self.state = 'active'
-        """if self.public_key:
+        if self.public_key:
 	    verifactu_crt = self.env['ir.config_parameter'].search([('key','=','l10n_es_aeat_verifactu.publicCrt')])
             #sii_crt = self.env.ref('l10n_es_aeat_verifactu.publicCrt')
             verifactu_crt.value = self.public_key
@@ -58,4 +58,4 @@ class CertificateVerifactu(models.Model):
         other_configs = self.search([('id', '!=', self.id)])
         for config_id in other_configs:
             config_id.state = 'draft'
-        self.state = 'active'"""
+        self.state = 'active'

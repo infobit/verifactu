@@ -26,8 +26,33 @@ class res_company(models.Model):
     verifactu_last_document_id = fields.Reference(
         string="Last Verifactu Document",
         selection="_selection_verifactu_reference_models",
-        #readonly=True,
+        readonly=True,
     )
+    verifactu_developer_id = fields.Many2one(
+        comodel_name="verifactu.developer",
+        string="Verifactu Developer",
+        ondelete="set null",
+    )
+    verifactu_start_date = fields.Date(
+        help="If this field is set, the verifactu won't be enabled on invoices with lower "
+        "invoice date. If not set, the verifactu can be enabled on all invoice dates"
+    )
+
+    def write(self, cr, uid, ids, vals, context=None):
+        res = super(res_company, self).write(cr, uid, ids, vals, context=context)
+        if "verifactu_enabled" in vals:
+            for company in self:
+                if vals.get("verifactu_enabled", False):
+                    journals = self.env["account.journal"].search(
+                        [
+                            ("company_id", "=", company.id),
+                            ("type", "=", "sale"),
+                        ]
+                    )
+                    if journals:
+                        journals.write({"verifactu_enabled": True})
+        return res
+
 
     @api.model
     def _selection_verifactu_reference_models(self):

@@ -1,6 +1,7 @@
 import aeat_verifactu_map
 import aeat_verifactu_map_lines
 import aeat_verifactu_registration_keys
+import verifactu_developer
 import certificate_verifactu
 import account_journal
 import res_company
