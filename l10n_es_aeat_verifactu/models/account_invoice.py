@@ -171,7 +171,6 @@ class account_invoice(models.Model):
                 record._compute_verifactu_qr_url()
                 #LLAMADA AL ENVIO A VERIFACTU
                 record._process_verifactu_send()
-                #record.send_verifactu()
         return res
 
     def _check_verifactu_configuration(self):
@@ -234,7 +233,7 @@ class account_invoice(models.Model):
             )"""
         return
 
-    def _check_all_taxes_mapped(self):
+    """def _check_all_taxes_mapped(self):
         tax_lines = self.tax_line_ids
         if not tax_lines:
             raise UserError(
@@ -252,7 +251,7 @@ class account_invoice(models.Model):
         for tax_line in tax_lines.values():
             if tax_line["tax"] not in mapped_taxes:
                 return False
-        return True
+        return True"""
 
     def _generate_verifactu_chaining(self):
         self.ensure_one()
@@ -919,34 +918,6 @@ class account_invoice(models.Model):
     def _get_verifactu_jobs_field_name(self):
         raise NotImplementedError
 
-    @api.multi
-    def send_verifactu(self):
-        """General public method for filtering out of the starting recordset the records
-        that shouldn't be sent to Verifactu:
-
-        - Documents of companies with Verifactu not enabled (through verifactu_enabled).
-        - Documents not applicable to be sent to Verifactu (through verifactu_enabled).
-        - Documents in non applicable states (for example, cancelled invoices).
-        - Documents already sent to Verifactu.
-        - Documents with sending jobs pending to be executed.
-        """
-        valid_states = self._get_verifactu_valid_document_states()
-        for document in self:
-            """if (
-                not document.verifactu_enabled
-                or document.state not in valid_states
-                or document.verifactu_state in ["sent", "cancelled"]
-            ):
-                continue"""
-            document._process_verifactu_send()
-
-    def _process_verifactu_send(self):
-        """
-        Process document sending to Verifactu
-        TODO : use connector
-        """
-        for record in self:
-            record.confirm_verifactu_one_document()
 
     def confirm_verifactu_one_document(self):
         self.sudo()._send_document_to_verifactu()
@@ -1153,6 +1124,23 @@ class account_invoice(models.Model):
             )
 
     @api.model
+    def _get_verifactu_batch(self):
+        try:
+            return int(
+                self.env["ir.config_parameter"]
+                .sudo()
+                .get_param("l10n_es_aeat_verifactu.verifactu_batch", "50")
+            )
+        except ValueError as e:
+            raise UserError(
+                _(
+                    "The value in l10n_es_aeat_verifactu.verifactu_batch "
+                    "system parameter must be an integer. Please, check the "
+                    "value of the parameter."
+                )
+            ) from e
+
+    @api.model
     def _send_to_verifactu_valid(self):
         remaining_documents = self.env["account.invoice"]
         documents = all_documents = self.search(
@@ -1171,6 +1159,7 @@ class account_invoice(models.Model):
             documents = all_documents[:batch]
             remaining_documents = all_documents - documents
             documents._process_verifactu_send()
+        raise Warning(remaining_documents)
         return remaining_documents
 
     @api.model
