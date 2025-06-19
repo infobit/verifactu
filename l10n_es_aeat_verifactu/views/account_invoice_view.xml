@@ -71,21 +71,61 @@
                     <field name="inalterable_hash"/>
                     <field name="string_to_hash"/>
         -->
-        <!--<record id="view_invoice_filter_ref" model="ir.ui.view">
-            <field name="name">Invoice (partner reference)</field>
+        <record id="view_invoice_filter_verifactu" model="ir.ui.view">
+            <field name="name">Invoice (filter verifactu)</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.view_account_invoice_filter"/>
             <field name="type">search</field>
             <field name="arch" type="xml">
-                <field name="partner_id" position="after">
-                    <field name="partner_ref"/>
-                </field>
+                <!--<field name="partner_id" position="after">
+                    <field name=""/>
+                </field>-->
                 <filter string="Partner" position="after">
-                  <filter string="Referencia de contacto" icon="terp-partner" context="{'group_by':'partner_ref'}"/>
+                    <group string="Verifactu filters">
+                    <separator />
+                    <filter
+                        name="verifactu_not_sent"
+                        string="Verifactu not sent"
+                        domain="[('verifactu_state', '=', 'not_sent'), ('verifactu_enabled', '=', True)]"
+                        help="Never sent to Verifactu"
+                    />
+                    <filter
+                        name="verifactu_pending"
+                        string="With modifications not sent to Verifactu"
+                        domain="[('verifactu_state', 'in', ['sent_modified','cancelled_modified'])]"
+                        help="Already sent but with local changes not sent yet"
+                    />
+                    <filter
+                        name="verifactu_sent"
+                        string="Verifactu sent"
+                        domain="[('verifactu_state', 'not in', ['not_sent'])]"
+                        help="Already sent to Verifactu. It includes cancelled invoices"
+                    />
+                    <filter
+                        name="aeat_send_failed"
+                        string="Verifactu failed"
+                        domain="[('verifactu_send_failed', '=', True)]"
+                        help="The last attemp to sent to Verifactu has failed"
+                    />
+                    <separator />
+                    <filter
+                        name="verifactu_cancelled"
+                        string="Verifactu cancelled"
+                        domain="[('verifactu_state', 'in', ['cancelled','cancelled_modified'])]"
+                        help="Cancelled invoices at Verifactu"
+                    />
+                    <separator />
+                    <filter
+                    string="Verifactu error"
+                    name="verifactu_error"
+                    domain="[('verifactu_send_failed', '=', True)]"
+                    context="{'group_by':'verifactu_send_error'}"
+                    />
+                </group>
                 </filter>
             </field>
         </record>
-        <record id="view_invoice_tree_ref" model="ir.ui.view">
+        <!--<record id="view_invoice_tree_ref" model="ir.ui.view">
             <field name="name">Invoice (ruta)</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_tree"/>
