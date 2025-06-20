@@ -161,6 +161,10 @@ class account_invoice(models.Model):
     def invoice_validate(self):
         res = super(account_invoice, self).invoice_validate() #action_number()
         for record in self:
+           if record.type == 'out_refund' and record.verifactu_refund_type:
+              raise osv.except_osv(
+                   _('Aviso'),
+                   _("Por favor, indique el tipo de factura rectificativa. (Verifactu refund type)"))
            if record.verifactu_enabled and record.verifactu_state == "not_sent":
                 #utc_time = pytz.utc.localize(datetime.utcnow())
                 record._check_verifactu_configuration()
@@ -173,6 +177,30 @@ class account_invoice(models.Model):
                 #LLAMADA AL ENVIO A VERIFACTU
                 record._process_verifactu_send()
         return res
+
+    @api.multi
+    def send_verifactu(self):
+        """General public method for filtering out of the starting recordset the records
+        that shouldn't be sent to Verifactu:
+
+        - Documents of companies with Verifactu not enabled (through verifactu_enabled).
+        - Documents not applicable to be sent to Verifactu (through verifactu_enabled).
+        - Documents in non applicable states (for example, cancelled invoices).
+        - Documents already sent to Verifactu.
+        - Documents with sending jobs pending to be executed.Add commentMore actions
+        """
+        #regenerar hash por si ha habido algún envío de una nueva factura.
+        #self._get_verifactu_hash_string()
+
+        valid_states = self._get_valid_document_states()
+        for document in self:
+            if (
+                not document.verifactu_enabled
+                or document.state not in valid_states
+                or document.verifactu_state in ["sent", "cancelled"]
+            ):
+                continue
+            document._process_verifactu_send()
 
     def _check_verifactu_configuration(self):
         if not self.company_id.tax_agency_id:
@@ -398,10 +426,21 @@ class account_invoice(models.Model):
         return self.company_id.partner_id.vat[2:] #_parse_aeat_vat_info()[2]
 
     def _get_verifactu_amount_tax(self):
-        return self.amount_tax #_signed
+        #return self.amount_tax #_signed
+        if self.type == 'out_refund':
+           amount_tax = - self.amount_tax
+        else:
+           amount_tax = self.amount_tax
+        return amount_tax
+
 
     def _get_verifactu_amount_total(self):
-        return self.amount_total #_signed
+        #return self.amount_total #_signed
+        if self.type == 'out_refund':
+           amount_total = -self.amount_total
+        else:
+           amount_total = self.amount_total
+        return amount_total
 
     def _get_verifactu_previous_hash(self):
         if self.verifactu_previous_document_id:
@@ -489,12 +528,14 @@ class account_invoice(models.Model):
         }
         #raise Warning(inv_dict)
         if self.type == "out_refund":
-            inv_dict["TipoRectificativa"] = self.verifactu_refund_type
-            origin = self.refund_invoices_id
+            inv_dict["TipoRectificativa"] = self.verifactu_refund_type or "I"
+            if not self.verifactu_refund_type:
+               self.verifactu_refund_typee = "I"
+            origin = self.origin_invoices_ids[0]
+            #raise Warning(origin)
             if origin:
                if self.verifactu_refund_type == "I":
                 inv_dict["FacturasRectificadas"] = []
-                origin = origin.number
                 if origin:
                     orig_document_date = self._change_date_format(
                         origin._get_document_date()
@@ -508,12 +549,12 @@ class account_invoice(models.Model):
                         }
                     }
                     inv_dict["FacturasRectificadas"].append(origin_data)
-               inv_dict["ImporteRectificacion"] = {
+                    """inv_dict["ImporteRectificacion"] = {
                      "BaseRectificada": origin.amount_untaxed,   #abs(origin.amount_untaxed_signed),
-                     "CuotaRectificada": abs(
+                     "CuotaRectificada": round(abs(
                          origin.amount_total - origin.amount_untaxed
-                     ),
-               }
+                     ),2),
+                    }"""
         inv_dict.update(
             {
                 "DescripcionOperacion": self._get_verifactu_description(),
@@ -654,11 +695,15 @@ class account_invoice(models.Model):
                     "Impuesto": self.verifactu_tax_key,
                     "ClaveRegimen": self.verifactu_registration_key_code,
                     "CalificacionOperacion": operation_type,
-                    "BaseImponibleOimporteNoSujeto": tax_line.base
                    }
+                   tax_dict["BaseImponibleOimporteNoSujeto"] = tax_line.base
+                   if tax_line.invoice_id.type == 'out_refund':
+                      tax_dict["BaseImponibleOimporteNoSujeto"] = -tax_line.base
                    if operation_type not in ['N1', 'N2']:
                     tax_dict["TipoImpositivo"] = round(imp.amount * 100,2)
                     tax_dict["CuotaRepercutida"] = tax_line.amount
+                    if tax_line.invoice_id.type == 'out_refund':
+                       tax_dict["CuotaRepercutida"] = -tax_line.amount
                     #RECARGO DE EQUIVALENCIA 
                     reqeq = self.env['account.fiscal.position.tax'].search([('tax_src_id', '=', imp.id), ('tax_dest_id', 'in', taxes_req.ids)])
                     #raise Warning(reqeq[0].tax_dest_id.name)
@@ -668,8 +713,11 @@ class account_invoice(models.Model):
                       if tax_line_req:
                          tipo_recargo = round(reqeq[0].tax_dest_id.amount * 100,2)
                          cuota_recargo = tax_line_req[0].amount
+                         if tax_line.invoice_id.type == 'out_refund':
+                            cuota_recargo = -tax_line_req[0].amount
                          tax_dict['TipoRecargoEquivalencia'] = tipo_recargo
                          tax_dict['CuotaRecargoEquivalencia'] = cuota_recargo
+
                    taxes_dict["DetalleDesglose"].append(tax_dict)
         #raise Warning(taxes_dict)
         return (
