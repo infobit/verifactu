@@ -27,28 +27,45 @@ class account_journal(models.Model):
         store=True,
         compute="_compute_restrict_mode_hash_table",
     )
-
+    company_verifactu_enabled = fields.Boolean(
+        related="company_id.verifactu_enabled", string="Company veri*FACTU"
+    )
     verifactu_enabled = fields.Boolean(string="Enable veri*FACTU", default=True)
 
     @api.depends(
-        "company_id", "company_id.verifactu_enabled", "company_id.country_id", "type"
+        "company_id", "company_id.verifactu_enabled", "verifactu_enabled", "type"
     )
     def _compute_restrict_mode_hash_table(self):
         for record in self:
             record.restrict_mode_hash_table_readonly = False
             if (
                 record.company_id.verifactu_enabled
-                and record.company_id.country_id.code == "ES"
+                and record.verifactu_enabled
                 and record.type == "sale"
             ):
                 record.restrict_mode_hash_table = True
                 record.restrict_mode_hash_table_readonly = True
 
-    @api.model
+    """@api.model
+            if country_code == "ES" and journal_type == "sale" and verifactu_enabled:
+            raise ValidationError(
+                _("You can't have a sale journal in Spain with veri*FACTU enabled.")
+            )
     def check_hash_modification(self, country_code, journal_type, verifactu_enabled):
         if country_code == "ES" and journal_type == "sale" and verifactu_enabled:
             raise ValidationError(
                 _("You can't have a sale journal in Spain with veri*FACTU enabled.")
+            )"""
+    @api.model
+    def check_hash_modification(
+        self, verifactu_enabled, journal_type, company_verifactu_enabled
+    ):
+        if verifactu_enabled and journal_type == "sale" and company_verifactu_enabled:
+            raise ValidationError(
+                _(
+                    "You can't have a sale journal with veri*FACTU enabled"
+                    "and not restricted hash modification."
+                )
             )
 
     @api.multi
@@ -60,7 +77,9 @@ class account_journal(models.Model):
             ):
                 company = self.env["res.company"].browse(vals.get("company_id"))
                 self.check_hash_modification(
-                    company.country_code, vals.get("type"), company.verifactu_enabled
+                  vals.get("verifactu_enabled"),
+                  vals.get("type"),
+                  company.verifactu_enabled,
                 )
         return super(account_journal, self).create(vals_list)
 
@@ -71,10 +90,15 @@ class account_journal(models.Model):
                 new_company_id = vals.get("company_id", record.company_id.id)
                 new_company = self.env["res.company"].browse(new_company_id)
                 new_type = vals.get("type", record.type)
-                new_country_code = new_company.country_code
-                new_verifactu_enabled = new_company.verifactu_enabled
+                #new_country_code = new_company.country_code
+                #new_verifactu_enabled = new_company.verifactu_enabled
+                new_verifactu_enabled = vals.get(
+                    "verifactu_enabled", record.verifactu_enabled
+                )
+                new_company_verifactu_enabled = new_company.verifactu_enabled
                 record.check_hash_modification(
-                    new_country_code, new_type, new_verifactu_enabled
+                    new_verifactu_enabled, new_type, new_company_verifactu_enabled
+                    #new_country_code, new_type, new_verifactu_enabled
                 )
         return super(account_journal, self).write(vals)
     # ==== Hash Fields ====

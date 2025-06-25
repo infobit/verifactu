@@ -244,17 +244,17 @@ class account_invoice(models.Model):
                 % self.name
             )
 
-        """if not self._check_all_taxes_mapped():
+        if not self._check_all_taxes_mapped():
             raise UserError(
                 _(
                     "The invoice %s cannot be sent to Verifactu because it "
                     "does not have all taxes mapped."
                 )
                 % self.name
-            )"""
+            )
         return
 
-    """def _check_all_taxes_mapped(self):
+    def _check_all_taxes_mapped(self):
         tax_lines = self.tax_line_ids
         if not tax_lines:
             raise UserError(
@@ -269,10 +269,29 @@ class account_invoice(models.Model):
         tax_templates = verifactu_map.map_lines.mapped("taxes")
         mapped_taxes = self.company_id.get_taxes_from_templates(tax_templates)
         tax_lines =  self.tax_line_ids
-        for tax_line in tax_lines.values():
-            if tax_line["tax"] not in mapped_taxes:
+        for tax_line in tax_lines: #.values():
+            if tax_line["tax_id"] not in mapped_taxes:
                 return False
-        return True"""
+        return True
+
+    @api.model
+    def _get_verifactu_map(self, date):
+        return (
+            self.env["aeat.verifactu.map"]
+            .sudo()
+            .with_context(active_test=False)
+            .search(
+                [
+                    "|",
+                    ("date_from", "<=", date),
+                    ("date_from", "=", False),
+                    "|",
+                    ("date_to", ">=", date),
+                    ("date_to", "=", False),
+                ],
+                limit=1,
+            )
+        )
 
     def _generate_verifactu_chaining(self):
         self.ensure_one()
@@ -349,7 +368,7 @@ class account_invoice(models.Model):
                ) and (
                 not invoice.company_id.verifactu_start_date 
                 or (invoice.date_invoice and invoice.company_id.verifactu_start_date and invoice.date_invoice >= invoice.company_id.verifactu_start_date)
-               ):
+               ) and (invoice.type in ["out_invoice", "out_refund"]):
                 invoice.verifactu_enabled = (
                     invoice.fiscal_position_id
                     and invoice.fiscal_position_id.verifactu_active
@@ -433,8 +452,11 @@ class account_invoice(models.Model):
         serialNumber = self._get_document_serial_number()
         expeditionDate = self._change_date_format(self._get_document_date())
         documentType = self._get_verifactu_document_type()
-        amountTax = self._get_verifactu_amount_tax()
-        amountTotal = self._get_verifactu_amount_total()
+        #amountTax = self._get_verifactu_amount_tax()
+        #amountTotal = self._get_verifactu_amount_total()
+        _taxes_dict, amount_tax, amount_total = self._get_verifactu_taxes_and_total()
+        amountTax = round(amount_tax, 2)
+        amountTotal = round(amount_total, 2)
         previousHash = self._get_verifactu_previous_hash()
         registrationDate = self._get_verifactu_registration_date()
         verifactu_hash_string = (
@@ -468,9 +490,11 @@ class account_invoice(models.Model):
         document_date = self._change_date_format(self._get_document_date())
         company = self.company_id
         serial_number = self._get_document_serial_number()
-        amount_tax = self._get_verifactu_amount_tax()
-        amount_total = self._get_verifactu_amount_total()
+        #amount_tax = self._get_verifactu_amount_tax()
+        #amount_total = self._get_verifactu_amount_total()
         taxes_dict, amount_tax, amount_total = self._get_verifactu_taxes_and_total()
+        amountTax = round(amount_tax, 2)
+        amountTotal = round(amount_total, 2)
         company_vat = company.partner_id.vat[2:] #_parse_aeat_vat_info()[2]
         verifactu_doc_type = self._get_verifactu_document_type()
         registroAlta = {}
@@ -526,8 +550,8 @@ class account_invoice(models.Model):
         inv_dict.update(
             {
                 "Desglose": taxes_dict,
-                "CuotaTotal": amount_tax,
-                "ImporteTotal": amount_total,
+                "CuotaTotal": amountTax,
+                "ImporteTotal": amountTotal,
                 "Encadenamiento": self._get_chaining_invoice_dict(),
                 "SistemaInformatico": self._get_verifactu_developer_dict(),
                 "FechaHoraHusoGenRegistro": self._get_verifactu_registration_date(),
@@ -627,7 +651,16 @@ class account_invoice(models.Model):
         taxes_N1 = self._get_verifactu_taxes_map(["N1"], document_date)
         taxes_N2 = self._get_verifactu_taxes_map(["N2"], document_date)
         taxes_req = self._get_verifactu_taxes_map(["RE"], document_date)
+        taxes_not_in_total = self._get_verifactu_taxes_map(
+            ["TaxNotIncludedInTotal"], document_date
+        )
+        base_not_in_total = self._get_verifactu_taxes_map(
+            ["BaseNotIncludedInTotal"], document_date
+        )
+        excluded_taxes = taxes_not_in_total + base_not_in_total
         breakdown_taxes = taxes_S1 + taxes_S2 + taxes_N1 + taxes_N2
+        not_in_amount_total = 0.0
+        not_in_taxes = 0.0
         tax_dict = {}
         vtax = []
         for tax_line in self.tax_line_ids: #self.invoice_line:
@@ -635,6 +668,10 @@ class account_invoice(models.Model):
             imp = self.env['account.tax'].search([('name', '=', tax_line.name)])
             if imp:
                #for tax_line in inv_line.invoice_line_tax_id:
+               if imp in taxes_not_in_total:
+                   not_in_amount_total += tax_line["amount"]
+               elif imp in base_not_in_total:
+                   not_in_amount_total += tax_line["base"]
                if imp in breakdown_taxes:
                    operation_type = self._get_operation_type(
                     imp, taxes_S1, taxes_S2, taxes_N1, taxes_N2
@@ -666,11 +703,20 @@ class account_invoice(models.Model):
                          tax_dict['TipoRecargoEquivalencia'] = tipo_recargo
                          tax_dict['CuotaRecargoEquivalencia'] = cuota_recargo
                    taxes_dict["DetalleDesglose"].append(tax_dict)
+               elif imp in excluded_taxes:
+                not_in_taxes += tax_line["amount"]
+               else:
+                raise UserError(_("%s tax is not mapped to Verifactu." % imp.name)) 
         #raise Warning(taxes_dict)
+        if self.type == 'out_refund':
+           amount_tax = -(self.amount_tax - not_in_taxes)
+        else:
+           amount_tax = self.amount_tax - not_in_taxes
+        amount_total = self.amount_total_signed - not_in_amount_total
         return (
             taxes_dict,
-            self._get_verifactu_amount_tax(),
-            self._get_verifactu_amount_total(),
+            amount_tax,
+            amount_total,
         )
 
 
@@ -748,6 +794,7 @@ class account_invoice(models.Model):
         for move in self: #.filtered(lambda m: m.inalterable_hash):
             base_url = move.company_id.url_qrverifactu_test
             #raise Warning(base_url)
+            _taxes_dict, _amount_tax, amount_total = self._get_verifactu_taxes_and_total()
             urlqrinvoice = base_url
             if move.company_id.vat:
                urlqrinvoice += "nif=" + move.company_id.vat[2:]
@@ -756,7 +803,7 @@ class account_invoice(models.Model):
             if move.date_invoice:
                urlqrinvoice += "&fecha=" + move._change_date_format(self._get_document_date())
             if move.amount_total:
-               urlqrinvoice += "&importe=" + str(move.amount_total)
+               urlqrinvoice += "&importe=" + str(amount_total)
             move.verifactu_qr_url = urlqrinvoice
             # Generar el código QR
             qr = qrcode.QRCode(
@@ -772,7 +819,7 @@ class account_invoice(models.Model):
             # Guardar la imagen en un archivo
             temp_file = io.BytesIO() #StringIO()
             qr_image.save(temp_file)
-            qr_image = b64encode(temp_file.getvalue())
+            qr_image = b64encode(temp_file.getvalue()).decode('utf-8')
             #raise Warning(qr_image)
             move.write({'qr_image': qr_image})
             #raise Warning(move.qr_image)
@@ -1006,6 +1053,7 @@ class account_invoice(models.Model):
                 doc_vals["verifactu_send_error"] = send_error
                 document.write(doc_vals)
             except Exception as fault:
+                self.env.cr.rollback()
                 new_cr = Registry(self.env.cr.dbname).cursor()
                 env = api.Environment(new_cr, self.env.uid, self.env.context)
                 document = env[document._name].browse(document.id)
@@ -1097,7 +1145,7 @@ class account_invoice(models.Model):
         """
         map_obj = self.env["aeat.verifactu.map"].sudo().with_context(active_test=False)
         taxes = self.env['account.tax']
-        verifactu_map = map_obj.search(
+        """verifactu_map = map_obj.search(
             [
                 "|",
                 ("date_from", "<=", date),
@@ -1107,7 +1155,8 @@ class account_invoice(models.Model):
                 ("date_to", "=", False),
             ],
             limit=1,
-        )
+        )"""
+        verifactu_map = self._get_verifactu_map(date)
         mapping_taxes = {}
         tax_templates = verifactu_map.map_lines.filtered(
             lambda x: x.code in codes

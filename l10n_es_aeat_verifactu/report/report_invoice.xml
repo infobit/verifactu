@@ -13,7 +13,7 @@
                     <strong>Verifactu QR</strong>
                     <div class="mb32 w-100">
                         <t t-if="o.qr_image">
-                             <img t-att-src="'data:image/png;base64,%s' % o.qr_image" style="width:40mm;height:40mm;"/>
+                             <img t-att-src="'data:image/png;base64,%s' % to_text(o.qr_image)" style="width:40mm;height:40mm;"/>
                         </t>
                     </div>
                     <p><strong>Factura verificable en la sede electrónica de la AEAT</strong></p>
