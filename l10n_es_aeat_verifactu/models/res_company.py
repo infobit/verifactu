@@ -7,7 +7,7 @@ import logging
 
 from openerp import models, fields, api, _
 from openerp.exceptions import except_orm, Warning, RedirectWarning
-from openerp.tools import float_compare
+from openerp.tools import float_compare, cache
 import openerp.addons.decimal_precision as dp
 from openerp.tools import ormcache
 _logger = logging.getLogger(__name__)
@@ -66,11 +66,12 @@ class res_company(models.Model):
         # and virtual records that populate m2m as NewId.
         for tmpl in self.env["account.tax.template"].browse(tax_templates.ids):
             tax_id = self._get_tax_id_from_tax_template(tmpl, self)
+            #raise Warning(tax_id)
             if tax_id:
                 tax_ids.append(tax_id)
         return self.env["account.tax"].browse(tax_ids)
 
-    @ormcache("tax_template", "company")
+    @cache(skiparg=1)
     def _get_tax_id_from_tax_template(self, tax_template, company):
         """Low level cached search for a tax given its tax template and
         company.
