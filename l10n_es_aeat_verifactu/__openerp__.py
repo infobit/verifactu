@@ -29,7 +29,7 @@ Para configurar este módulo es necesario:
    - Para aplicar las claves ejecute el asistente de actualización del módulo account_chart_update.
     """,
     'website': 'https://github.com/infobit/verifactu.git',
-    'depends' : ['account'],
+    'depends' : ['account', 'connector'],
     "external_dependencies": {"python": ["zeep", "requests"]},
     'data': [
         "data/aeat_verifactu_tax_agency_data.xml",
@@ -44,8 +44,9 @@ Para configurar este módulo es necesario:
         "views/account_fiscal_position_view.xml",
         "views/res_company_view.xml",
         "views/res_partner_view.xml",
-        'views/account_journal_view.xml',
-        'views/account_invoice_view.xml',
+        "views/account_journal_view.xml",
+        "views/queue_job_views.xml",
+        "views/account_invoice_view.xml",
         "views/aeat_verifactu_map_view.xml",
         "views/aeat_verifactu_map_lines_view.xml",
         "views/aeat_verifactu_registration_keys_view.xml",

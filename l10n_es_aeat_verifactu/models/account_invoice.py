@@ -28,6 +28,19 @@ import qrcode
 from cStringIO import StringIO
 import psycopg2
 
+#CONECTOR
+try:
+    from openerp.addons.connector.queue.job import job
+    from openerp.addons.connector.session import ConnectorSession
+except ImportError:
+    _logger.debug('Can not `import connector`.')
+    import functools
+
+    def empty_decorator_factory(*argv, **kwargs):
+        return functools.partial
+
+    job = empty_decorator_factory
+
 #VARIABLES VERIFACTU
 ####################
 VERIFACTU_VERSION = 1.0
@@ -148,6 +161,10 @@ class account_invoice(models.Model):
     )
     verifactu_send_date = fields.Datetime(index=True, copy=False)
     verifactu_registration_date = fields.Datetime(copy=False)
+    verifactu_invoice_jobs_ids = fields.Many2many(
+        comodel_name='queue.job', column1='invoice_id', column2='job_id',
+        string="Connector Jobs", copy=False,
+    )
 
     @api.model
     def _selection_verifactu_reference_models(self):
@@ -167,7 +184,7 @@ class account_invoice(models.Model):
                    _("Por favor, indique el tipo de factura rectificativa. (Verifactu refund type)"))
            if record.verifactu_enabled and record.verifactu_state == "not_sent":
                 #utc_time = pytz.utc.localize(datetime.utcnow())
-                record._check_verifactu_configuration()
+                #record._check_verifactu_configuration()
                 record.verifactu_registration_date = datetime.now() #utc_time #utc_time.astimezone(pytz.timezone('Europe/Madrid'))
                 record._generate_verifactu_chaining()
                 #record._process_verifactu_send()
@@ -272,7 +289,7 @@ class account_invoice(models.Model):
     def _check_all_taxes_mapped(self):
         tax_lines = self.tax_line
         if not tax_lines:
-            raise UserError(
+            raise ValidationError(
                 _(
                     "The invoice %s cannot be sent to Verifactu because"
                     "it does not have any taxes."
@@ -351,9 +368,27 @@ class account_invoice(models.Model):
             raise
 
     def _process_verifactu_send(self):
+        queue_obj = self.env['queue.job'].sudo()
         for record in self:
             record.verifactu_send_date = fields.Datetime.now()
-            record.confirm_verifactu_one_document()
+            company = record.company_id
+            if not company.verifactu_use_connector:
+               record.confirm_verifactu_one_document()
+            else:
+               eta = self.env.context.get('override_eta',
+                                           company._get_verifactu_eta())
+               ctx = self.env.context.copy()
+               ctx.update(company_id=company.id)
+               session = ConnectorSession(
+                    self.env.cr, SUPERUSER_ID, context=ctx,
+               )
+               new_delay = confirm_one_invoice_verifactu.delay(
+                    session, 'account.invoice', record.id,
+                    eta=eta if not record.verifactu_send_failed else False,
+               )
+               record.sudo().verifactu_invoice_jobs_ids |= queue_obj.search(
+                    [('uuid', '=', new_delay)], limit=1,
+               )
 
     def confirm_verifactu_one_document(self):
         self.sudo()._send_document_to_verifactu()
@@ -763,8 +798,8 @@ class account_invoice(models.Model):
                    taxes_dict["DetalleDesglose"].append(tax_dict)
                elif imp in excluded_taxes:
                 not_in_taxes += tax_line["amount"]
-               else:
-                raise UserError(_("%s tax is not mapped to Verifactu." % imp.name)) 
+               elif imp not in taxes_req:
+                raise ValidationError(_("%s tax is not mapped to Verifactu." % imp.name)) 
         #raise Warning(taxes_dict)
         if self.type == 'out_refund':
            amount_tax = -self.amount_tax - not_in_taxes
@@ -1352,4 +1387,11 @@ class account_invoice(models.Model):
             self.env["ir.cron.trigger"].sudo().create(
                 {"cron_id": verifactu_send_cron.id, "call_at": fields.Datetime.now()}
             )
+
+@job(default_channel='root.invoice_validate_verifactu')
+def confirm_one_invoice_verifactu(session, model_name, invoice_id):
+    model = session.env[model_name]
+    invoice = model.browse(invoice_id)
+    if invoice.exists():
+       invoice._send_document_to_verifactu()
 
