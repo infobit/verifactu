@@ -13,19 +13,19 @@
                 <field name="date_done"/>
                 <field name="state"/>
                 <button type="object"
-                        name="requeue_sudo"
+                        name="requeue_verifactu_sudo"
                         string="Requeue"
                         class="oe_highlight"
                         attrs="{'invisible': [('state', '!=', 'failed')]}"/>
                  <button type="object"
-                         name="cancel_now"
+                         name="cancel_verifactu_now"
                          string="Cancel sending"
                          class="oe_highlight_cancel"
                          icon="gtk-stop"
                          attrs="{'invisible': [('state', 'not in', ['pending','enqueued'])]}"
                 />
                 <button type="object"
-                        name="do_now"
+                        name="do_verifactu_now"
                         string="Send now"
                         class="oe_highlight"
                         icon="gtk-go-forward"

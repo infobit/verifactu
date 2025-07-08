@@ -8,16 +8,16 @@ class QueueJob(models.Model):
     _inherit = 'queue.job'
 
     @api.multi
-    def do_now(self):
+    def do_verifactu_now(self):
         self.sudo().write({'eta': 0})
 
     @api.multi
-    def cancel_now(self): 
+    def cancel_verifactu_now(self): 
         self.sudo().filtered(
             lambda x: x.state in ['pending', 'enqueued']
         ).unlink()
 
     @api.multi
-    def requeue_sudo(self):
+    def requeue_verifactu_sudo(self):
         self.sudo().requeue()
 

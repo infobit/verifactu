@@ -70,7 +70,7 @@ class account_invoice(models.Model):
         compute="_compute_verifactu_enabled",
     )
 
-    verifactu_send_failed = fields.Boolean("Send failed", readonly=True)
+    verifactu_send_failed = fields.Boolean("Send failed", readonly=True, copy=False)
     verifactu_send_error = fields.Text("Send error", readonly=True, copy=False)
     verifactu_header_sent = fields.Text(
         string="VERIFACTU last header sent", copy=False, readonly=True,
@@ -79,10 +79,10 @@ class account_invoice(models.Model):
         string="VERIFACTU last content sent", copy=False, readonly=True,
     )
 
-    verifactu_hash_string = fields.Text("Verifactu HASH String", tracking=True)
-    verifactu_hash = fields.Char("Verifactu HASH", tracking=True)
-    verifactu_qr_url = fields.Char(string="Verifactu QR URL")
-    qr_image = fields.Binary("Image QRL Invoice")
+    verifactu_hash_string = fields.Text("Verifactu HASH String", tracking=True, copy=False)
+    verifactu_hash = fields.Char("Verifactu HASH", tracking=True, copy=False)
+    verifactu_qr_url = fields.Char(string="Verifactu QR URL", copy=False)
+    qr_image = fields.Binary("Image QRL Invoice", copy=False)
     
 
     verifactu_refund_type = fields.Selection(
@@ -1180,7 +1180,7 @@ class account_invoice(models.Model):
                         }
                     )
                 else:
-                    doc_vals["aeat_send_failed"] = True
+                    doc_vals["verifactu_send_failed"] = True
                 doc_vals["verifactu_return"] = res
                 send_error = False
                 if res_line["CodigoErrorRegistro"]:
