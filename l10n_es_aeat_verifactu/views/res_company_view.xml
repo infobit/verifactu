@@ -49,6 +49,15 @@
                          <field name="url_qrnoverifactu_test"/>
                        </group>
                     </group>
+                    <group name="verifactu_connector" string="Connector config">
+                            <field name="verifactu_use_connector" />
+                            <field name="verifactu_send_mode"
+                                   attrs="{'invisible': [('verifactu_use_connector', '=', False)]}"/>
+                            <field name='verifactu_sent_time' widget='float_time'
+                                   attrs="{'invisible': ['|', ('verifactu_use_connector', '=', False), ('verifactu_send_mode', '!=', 'fixed')]}"/>
+                            <field name='verifactu_delay_time' widget='float_time'
+                                   attrs="{'invisible': ['|', ('verifactu_use_connector', '=', False), ('verifactu_send_mode', '!=', 'delayed')]}"/>
+                    </group>
                 </page>
             </notebook>
         </field>

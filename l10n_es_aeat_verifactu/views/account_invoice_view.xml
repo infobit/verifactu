@@ -41,7 +41,7 @@
                             <field name="verifactu_content_sent" />
                           </group>
                      </page>
-                     <page string="Veri*FACTU Information" name="page_aeat" attrs="{'invisible': [('verifactu_enabled', '=', False)]}">
+                     <page string="Veri*FACTU Information" name="page_aeat"> <!--attrs="{'invisible': [('verifactu_enabled', '=', False)]}">-->
                       <group string="Veri*FACTU Information" name="group_aeat_information">
                         <field name="verifactu_enabled" invisible="0" readonly="1" />
                         <field name="verifactu_description" />

@@ -30,6 +30,18 @@ from urllib.parse import urlparse
 import io
 #from cStringIO import StringIO
 import psycopg2
+
+#CONECTOR
+try:
+    from odoo.addons.queue_job.job import job
+except ImportError:
+    _logger.debug('Can not `import queue job`.')
+    import functools
+
+    def empty_decorator_factory(*argv, **kwargs):
+        return functools.partial
+    job = empty_decorator_factory
+
 #VARIABLES VERIFACTU
 ####################
 VERIFACTU_VERSION = 1.0
@@ -68,10 +80,10 @@ class account_invoice(models.Model):
         string="VERIFACTU last content sent", copy=False, readonly=True,
     )
 
-    verifactu_hash_string = fields.Text("Verifactu HASH String")
-    verifactu_hash = fields.Char("Verifactu HASH") 
-    verifactu_qr_url = fields.Char(string="Verifactu QR URL")
-    qr_image = fields.Binary("Image QRL Invoice")
+    verifactu_hash_string = fields.Text("Verifactu HASH String", copy=False, tracking=True)
+    verifactu_hash = fields.Char("Verifactu HASH", copy=False, tracking=True) 
+    verifactu_qr_url = fields.Char(string="Verifactu QR URL", copy=False)
+    qr_image = fields.Binary("Image QRL Invoice", copy=False)
 
     verifactu_refund_type = fields.Selection(
         selection=[
@@ -149,6 +161,11 @@ class account_invoice(models.Model):
     )
     verifactu_send_date = fields.Datetime(index=True, copy=False)
     verifactu_registration_date = fields.Datetime(copy=False)
+    verifactu_invoice_jobs_ids = fields.Many2many(
+        comodel_name='queue.job', column1='invoice_id', column2='job_id',
+        string="Connector Jobs", copy=False,
+    )
+
 
     @api.model
     def _selection_verifactu_reference_models(self):
@@ -332,9 +349,23 @@ class account_invoice(models.Model):
             raise
 
     def _process_verifactu_send(self):
+        queue_obj = self.env['queue.job'].sudo()
         for record in self:
             record.verifactu_send_date = fields.Datetime.now()
-            record.confirm_verifactu_one_document()
+            company = record.company_id
+            if not company.verifactu_use_connector:
+               record.confirm_verifactu_one_document()
+            else:
+               eta = company._get_verifactu_eta()
+               new_delay = record.sudo().with_context(
+                    company_id=company.id
+                ).with_delay(
+                    eta=eta if not record.verifactu_send_failed else False,
+                ).confirm_one_invoice_verifactu()
+               job = queue_obj.search([
+                    ('uuid', '=', new_delay.uuid)
+               ], limit=1)
+               record.sudo().verifactu_invoice_jobs_ids |= job
 
     @api.depends("type")
     def _compute_verifactu_refund_type(self):
@@ -472,10 +503,13 @@ class account_invoice(models.Model):
         return verifactu_hash_string
 
     @api.model
-    def _get_subsanation_verifactu_hash(self):
+    def _set_subsanation_verifactu_hash(self):
         verifactu_hash_values = self._get_verifactu_hash_string()
         hash_string = sha256(verifactu_hash_values.encode("utf-8"))
-        return hash_string.hexdigest().upper()
+        self.verifactu_hash_string = hash_string
+        self.verifactu_hash = hash_string.hexdigest().upper()
+        return self.verifactu_hash
+        #return hash_string.hexdigest().upper()
 
     @api.model
     def _get_verifactu_invoice_dict_out(self, cancel=False):
@@ -564,7 +598,7 @@ class account_invoice(models.Model):
                 {
                     "Subsanacion": "S",
                     # "RechazoPrevio": "X",
-                    "Huella": self._get_subsanation_verifactu_hash(),
+                    "Huella": self._set_subsanation_verifactu_hash(),
                     #"Encadenamiento": self._get_chaining_invoice_dict(), #infobit
                 }
             )
@@ -705,7 +739,7 @@ class account_invoice(models.Model):
                    taxes_dict["DetalleDesglose"].append(tax_dict)
                elif imp in excluded_taxes:
                 not_in_taxes += tax_line["amount"]
-               else:
+               elif imp not in taxes_req:
                 raise UserError(_("%s tax is not mapped to Verifactu." % imp.name)) 
         #raise Warning(taxes_dict)
         if self.type == 'out_refund':
@@ -874,6 +908,7 @@ class account_invoice(models.Model):
         if (
             self.verifactu_state == "sent_w_errors"
             and registration_date < fields.Datetime.now()
+            and self.verifactu_send_error[:4] == "2004"
         ):
             header.update({"RemisionVoluntaria": {"Incidencia": "S"}})
         return header
@@ -1042,7 +1077,7 @@ class account_invoice(models.Model):
                         }
                     )
                 else:
-                    doc_vals["aeat_send_failed"] = True
+                    doc_vals["verifactu_send_failed"] = True
                 doc_vals["verifactu_return"] = res
                 send_error = False
                 if res_line["CodigoErrorRegistro"]:
@@ -1249,3 +1284,8 @@ class account_invoice(models.Model):
             self.env["ir.cron.trigger"].sudo().create(
                 {"cron_id": verifactu_send_cron.id, "call_at": fields.Datetime.now()}
             )
+
+    @job(default_channel='root.invoice_validate_verifactu')
+    @api.multi
+    def confirm_one_invoice_verifactu(self):
+        self._send_document_to_verifactu()

@@ -30,7 +30,7 @@ Para configurar este módulo es necesario:
     """,
     'website': 'https://github.com/infobit/verifactu.git',
     "external_dependencies": {"python": ["zeep", "requests"]},
-    'depends' : ['account'],
+    'depends' : ['account', 'queue_job', 'l10n_es'], #"account_invoice_refund_link", "l10n_es_aeat"],
     'data': [
         "data/aeat_verifactu_tax_agency_data.xml",
         "data/aeat_verifactu_registration_keys.xml",
@@ -43,6 +43,7 @@ Para configurar este módulo es necesario:
         "views/account_fiscal_position_view.xml",
         "views/res_company_view.xml",
         "views/res_partner_view.xml",
+        "views/queue_job_views.xml",
         'views/account_journal_view.xml',
         'views/account_invoice_view.xml',
         "views/aeat_verifactu_map_view.xml",
