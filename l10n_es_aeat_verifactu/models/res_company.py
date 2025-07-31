@@ -28,6 +28,12 @@ class res_company(models.Model):
         selection="_selection_verifactu_reference_models",
         #readonly=True,
     )
+    last_verifactu_invoice_entry_id = fields.Many2one(
+        "verifactu.invoice.entry",
+        string="VeriFactu Invoice Entry",
+        #readonly=True,
+        copy=False,
+    )
     verifactu_developer_id = fields.Many2one(
         comodel_name="verifactu.developer",
         string="Verifactu Developer",

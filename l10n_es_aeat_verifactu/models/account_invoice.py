@@ -166,6 +166,35 @@ class account_invoice(models.Model):
         string="Connector Jobs", copy=False,
     )
 
+    verifactu_invoice_entry_ids = fields.One2many(
+        "verifactu.invoice.entry",
+        inverse_name="document_id",
+        domain=lambda doc: [("model", "=", doc._name)],
+        string="VeriFactu Invoice Entry",
+        readonly=True,
+        copy=False,
+    )
+    verifactu_response_line_ids = fields.One2many(
+        "verifactu.invoice.entry.response.line",
+        inverse_name="document_id",
+        domain=lambda doc: [("model", "=", doc._name)],
+        string="Verifactu Response Lines",
+        readonly=True,
+        copy=False,
+    )
+    last_verifactu_invoice_entry_id = fields.Many2one(
+        "verifactu.invoice.entry",
+        string="VeriFactu Invoice Entry",
+        readonly=True,
+        copy=False,
+    )
+    last_verifactu_response_line_id = fields.Many2one(
+        "verifactu.invoice.entry.response.line",
+        string="Verifactu Response Line",
+        readonly=True,
+        copy=False,
+    )
+
 
     @api.model
     def _selection_verifactu_reference_models(self):
@@ -185,7 +214,7 @@ class account_invoice(models.Model):
                 #LLAMADA A LA GENERACIÓN DEL HASH Y QR
                 record._compute_verifactu_qr_url()
                 #LLAMADA AL ENVIO A VERIFACTU
-                record._process_verifactu_send()
+                #record._process_verifactu_send()
         return res
 
     #boton de envío en la vista de la factura
@@ -315,23 +344,46 @@ class account_invoice(models.Model):
         #self.company_id.flush_recordset(["verifactu_last_document_id"])
         try:
             with self.env.cr.savepoint():
-                self.env.cr.execute(
+                """self.env.cr.execute(
                     "SELECT verifactu_last_document_id FROM"
                     " res_company WHERE id = %s FOR UPDATE NOWAIT",
                     [self.company_id.id],
                 )
-                result = self.env.cr.fetchone()[0]
-                prev_doc = False
+                result = self.env.cr.fetchone()[0]"""
+                self.env.cr.execute(
+                    "SELECT last_verifactu_invoice_entry_id FROM"
+                    " res_company WHERE id = %s FOR UPDATE NOWAIT",
+                    [self.company_id.id],
+                )
+                result = self.env.cr.fetchone()
+                previous_invoice_entry_id = result[0] if result and result[0] else False
+
+                """prev_doc = False
                 if result:
                     document_data = result.split(",")
                     prev_doc = self.env[document_data[0]].browse(int(document_data[1]))
-                self.verifactu_previous_document_id = prev_doc
+                self.verifactu_previous_document_id = prev_doc"""
+                #crear registro en invoice entry y asignarlo en 
+                invoice_vals = {
+                    #"verifactu_chaining_id": chaining.id,
+                    "model": self._name,
+                    "document_id": self.id,
+                    "document_name": self.name,
+                    "company_id": self.company_id.id,
+                    "document_hash": "",
+                    "previous_invoice_entry_id": previous_invoice_entry_id,
+                }
+                #if entry_type:
+                #    invoice_vals["entry_type"] = entry_type
+                invoice_entry = self.env["verifactu.invoice.entry"].create(invoice_vals)
+                self.last_verifactu_invoice_entry_id = invoice_entry
+
                 verifactu_hash_values = self._get_verifactu_hash_string()
                 self.verifactu_hash_string = verifactu_hash_values
                 hash_string = sha256(verifactu_hash_values.encode("utf-8"))
                 self.verifactu_hash = hash_string.hexdigest().upper()
                 #raise Warning(self.verifactu_hash_string)
-                if prev_doc:
+                """if prev_doc:
                     prev_doc.verifactu_next_document_id = self
                 doc_reference = "{model},{id}".format(model=self._name, id=self.id)
                 self.env.cr.execute(
@@ -339,6 +391,19 @@ class account_invoice(models.Model):
                     "verifactu_last_document_id = %s"
                     "WHERE id = %s",
                     [doc_reference, self.company_id.id],
+                )"""
+                # Generate JSON data for AEAT
+                inv_dict = self._get_verifactu_invoice_dict()
+                #except Exception:
+                #    # If JSON generation fails, store empty string
+                #    aeat_json_data = ""
+                invoice_entry.document_hash = hash_string.hexdigest().upper()
+                invoice_entry.aeat_json_data = json.dumps(inv_dict, indent=4)
+                self.env.cr.execute(
+                    "UPDATE res_company SET "
+                    "last_verifactu_invoice_entry_id = %s"
+                    "WHERE id = %s",
+                    [invoice_entry.id, self.company_id.id],
                 )
                 #self.company_id.invalidate_recordset(["verifactu_last_document_id"])
         except psycopg2.OperationalError as err:
@@ -457,8 +522,11 @@ class account_invoice(models.Model):
         return self.amount_total_signed
 
     def _get_verifactu_previous_hash(self):
-        if self.verifactu_previous_document_id:
-            return self.verifactu_previous_document_id.verifactu_hash
+        if self.last_verifactu_invoice_entry_id and self.last_verifactu_invoice_entry_id.previous_hash:
+           return self.last_verifactu_invoice_entry_id.previous_hash
+        else:
+           if self.verifactu_previous_document_id:
+               return self.verifactu_previous_document_id.verifactu_hash
         return ""
 
     def _get_verifactu_registration_date(self):
@@ -610,11 +678,15 @@ class account_invoice(models.Model):
         """TODO
         si no es el primer registro, hay que enviar el registro anterior.
         Cuando sepamos cuál es el registro anterior"""
-        if self.verifactu_previous_document_id:
-           prev_invoice = self.verifactu_previous_document_id
+        if self.last_verifactu_invoice_entry_id and self.last_verifactu_invoice_entry_id.previous_invoice_entry_id:
+           prev_invoice = self.last_verifactu_invoice_entry_id.previous_invoice_entry_id.document_id
         else:
+         if self.verifactu_previous_document_id:
+           prev_invoice = self.verifactu_previous_document_id
+         else:
            prev_invoice = self._get_previous_invoice()
         if prev_invoice:
+           #raise Warning(prev_invoice)
            valores = {
                "RegistroAnterior": {
                     "IDEmisorFactura": prev_invoice._get_verifactu_issuer(),
@@ -1086,6 +1158,7 @@ class account_invoice(models.Model):
                         str(res_line["DescripcionErrorRegistro"]),
                     )
                 doc_vals["verifactu_send_error"] = send_error
+                #raise Warning(invoice_vals)
                 document.write(doc_vals)
             except Exception as fault:
                 self.env.cr.rollback()

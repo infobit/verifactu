@@ -9,5 +9,8 @@ from . import verifactu_developer
 from . import certificate_verifactu
 from . import account_journal
 from .import res_company
+from . import verifactu_invoice_entry
+from . import verifactu_invoice_entry_response     
+from . import verifactu_invoice_entry_response_line 
 from . import account_invoice_line
 from . import account_invoice
