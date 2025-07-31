@@ -9,8 +9,8 @@
                 <button name="action_invoice_open" position="after">
                  <button
                     type="object"
-                    string="Send to Verifactu"
-                    name="send_verifactu"
+                    string="Resend to Verifactu"
+                    name="resend_verifactu"
                     groups="l10n_es_aeat.group_account_aeat"
                     attrs="{'invisible': ['|','|',('verifactu_enabled', '=', False), ('state', 'not in', ['open']), ('verifactu_state','in',['sent','cancelled'])]}"
                  />

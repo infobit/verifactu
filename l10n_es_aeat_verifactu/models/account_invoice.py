@@ -219,25 +219,27 @@ class account_invoice(models.Model):
 
     #boton de envío en la vista de la factura
     @api.multi
-    def send_verifactu(self):
-        """General public method for filtering out of the starting recordset the records
-        that shouldn't be sent to Verifactu:
+    def resend_verifactu(self):
+        for rec in self:
+            if (
+                rec.verifactu_state == "sent_w_errors"
+                and rec.last_verifactu_invoice_entry_id
+                and not rec.last_verifactu_invoice_entry_id.send_state == "not_sent"
+            ):
+                rec.verifactu_registration_date = datetime.now()
+                rec._generate_verifactu_chaining(entry_type="modify")
 
-        - Documents of companies with Verifactu not enabled (through verifactu_enabled).
-        - Documents not applicable to be sent to Verifactu (through verifactu_enabled).
-        - Documents in non applicable states (for example, cancelled invoices).
-        - Documents already sent to Verifactu.
-        - Documents with sending jobs pending to be executed.
-        """
+    """@api.multi
+    def send_verifactu(self):
         valid_states = self._get_verifactu_valid_document_states()
         for document in self:
-            """if (Add commentMore actions
+            if (Add commentMore actions
                 not document.verifactu_enabled
                 or document.state not in valid_states
                 or document.verifactu_state in ["sent", "cancelled"]
             ):
-                continue"""
-            document._process_verifactu_send()
+                continue
+            document._process_verifactu_send()"""
 
 
     def _check_verifactu_configuration(self):
@@ -339,7 +341,7 @@ class account_invoice(models.Model):
             )
         )
 
-    def _generate_verifactu_chaining(self):
+    def _generate_verifactu_chaining(self, entry_type=False):
         self.ensure_one()
         #self.company_id.flush_recordset(["verifactu_last_document_id"])
         try:
@@ -373,8 +375,8 @@ class account_invoice(models.Model):
                     "document_hash": "",
                     "previous_invoice_entry_id": previous_invoice_entry_id,
                 }
-                #if entry_type:
-                #    invoice_vals["entry_type"] = entry_type
+                if entry_type:
+                    invoice_vals["entry_type"] = entry_type
                 invoice_entry = self.env["verifactu.invoice.entry"].create(invoice_vals)
                 self.last_verifactu_invoice_entry_id = invoice_entry
 
