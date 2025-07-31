@@ -154,9 +154,8 @@ class VerifactuInvoiceEntry(models.Model):
                 [company.id],  # Always use a list or tuple here
             )
             records_to_send = self.browse(r[0] for r in self.env.cr.fetchall())
-            send_date = datetime.now() #fields.Datetime.now()
+            send_date = datetime.now() 
             threshold_time = send_date - timedelta(seconds=240)
-            #raise Warning(records_to_send) #[0].document_id.verifactu_registration_date)
             outdated_records = records_to_send.filtered(
                 lambda r: datetime.strptime(r.document_id.verifactu_registration_date, '%Y-%m-%d %H:%M:%S') < threshold_time
             )
@@ -217,7 +216,6 @@ class VerifactuInvoiceEntry(models.Model):
         params = self._connect_params_aeat(mapping_key)
         parser = etree.XMLParser(resolve_entities=False)
         session = Session()
-        #raise Warning(params)
         session.cert = (public_crt, private_key)
         transport = Transport(session=session) #, xml_headers={'Content-Type': 'application/soap+xml'})
         history = HistoryPlugin()
@@ -318,26 +316,15 @@ class VerifactuInvoiceEntry(models.Model):
         header = rec._get_verifactu_aeat_header()
         registro_factura_list = []
         create_exception = False
-        #raise Warning(header)
         for rec in self:
             rec.send_attempt += 1
             if rec.document_id:
-                #rec.document_id._process_verifactu_send()
                 inv_dict = rec.document_id._get_verifactu_invoice_dict()
                 registro_factura_list.append(inv_dict)
-                """if rec.document_id.verifactu_state == 'sent':
-                   rec.send_state = 'correct'
-                if rec.document_id.verifactu_state == 'sent_w_errors':
-                   rec.send_state = 'accepted_with_errors'
-                if rec.document_id.verifactu_send_failed and rec.document_id.verifactu_state == 'no_sent':
-                   rec.send_state = 'incorrect'"""
-        #raise Warning(registro_factura_list)
         try:
             mapping_key = rec.document_id._get_mapping_key()
             serv = rec._connect_verifactu(mapping_key)
-            #raise Warning(serv)
             res = serv.RegFactuSistemaFacturacion(header, registro_factura_list)
-            #raise Warning(res)
         except Exception as fault:
             res = _("Error when trying to connect to Veri*FACTU: {}") #.format(e)
             raise ValidationError(fault)
@@ -351,8 +338,8 @@ class VerifactuInvoiceEntry(models.Model):
                     "header": json.dumps(header),
                     "name": response_name,
                     "invoice_data": json.dumps(registro_factura_list),
-                    "response": res, #rec.document_id.verifactu_return, #res,
-                    "verifactu_csv": "CSV" in res and res["CSV"] or _("-"), #rec.document_id.verifactu_csv, #"CSV" in res and res["CSV"] or _("-"),
+                    "response": res,
+                    "verifactu_csv": "CSV" in res and res["CSV"] or _("-"),
                 }
             )
         )
@@ -372,8 +359,7 @@ class VerifactuInvoiceEntry(models.Model):
         elif create_response_activity:
             updated_response_name = _("Incorrect invoices sent to Verifactu")
         response.name = updated_response_name
-        #if create_response_activity:
-        #    response.create_send_response_activity()
+
         return True
 
     def _create_response_lines(
@@ -388,7 +374,6 @@ class VerifactuInvoiceEntry(models.Model):
         document_models = self.env[
             "account.invoice"
         ]._selection_verifactu_reference_models()
-        #raise Warning(respuestaLineas)
         for verifactu_response_line in respuestaLineas:
             invoice_num = verifactu_response_line["IDFactura"]["NumSerieFactura"]
             for model in document_models: #models[0]
@@ -399,11 +384,9 @@ class VerifactuInvoiceEntry(models.Model):
                     ],
                     limit = 1,
                 )
-                #raise Warning(document)
                 if document:
                    break
             # Find the verifactu.invoice entry for this document
-            #raise Warning(document)
             verifactu_invoice_entry = document.last_verifactu_invoice_entry_id
             previous_response_line = document.last_verifactu_response_line_id
             estado_registro = verifactu_response_line["EstadoRegistro"]
@@ -418,14 +401,10 @@ class VerifactuInvoiceEntry(models.Model):
                 and str(verifactu_response_line["CodigoErrorRegistro"])
                 or "",
             }
-            #raise Warning(vals)
             response_line = (
                 self.env["verifactu.invoice.entry.response.line"].sudo().create(vals)
             )
-            #if document:
             document.last_verifactu_response_line_id = response_line
-            #raise Warning(verifactu_invoice_entry)
-            #if verifactu_invoice_entry:
             verifactu_invoice_entry.last_response_line_id = response_line
             self._process_response_line_doc_vals(
                 verifactu_response=verifactu_response,
@@ -440,57 +419,3 @@ class VerifactuInvoiceEntry(models.Model):
             if send_state != "correct":
                create_response_activity = True
         return create_response_activity
-
-        """create_response_activity = False
-        respuestaLineas = "RespuestaLinea" in res and res["RespuestaLinea"] or []
-        for linea in respuestaLineas:
-            invoice_num = linea["IDFactura"]["NumSerieFactura"]
-            document_models = self.env[
-                "verifactu.mixin"
-            ]._selection_verifactu_reference_models()
-            for model in document_models:
-            document = self.env['account.invoice'].search(  #self.env[model[0]].search(
-                    [
-                        ("name", "=", invoice_num),
-                        ("company_id", "=", rec.company_id.id),
-                        ("id", "in", self.mapped("document_id.id")),
-                    ],
-                    limit=1,
-            )
-            if document:
-                break
-            # Find the verifactu.invoice entry for this document
-            verifactu_invoice_entry = document.last_verifactu_invoice_entry_id
-            estado_registro = linea["EstadoRegistro"]
-            vals = {
-                "entry_id": verifactu_invoice_entry.id,
-                "model": verifactu_invoice_entry.model,
-                "document_id": verifactu_invoice_entry.document_id,
-                "response": linea,
-                "entry_response_id": response.id,
-                "send_state": VERIFACTU_STATE_MAPPING[estado_registro],
-                "error_code": "CodigoErrorRegistro" in linea
-                and str(linea["CodigoErrorRegistro"])
-                or "",
-            }
-            response_line = (
-                self.env["verifactu.invoice.entry.response.line"].sudo().create(vals)
-            )
-            raise Warning(document)
-            document.last_verifactu_response_line_id = response_line
-            verifactu_invoice_entry.last_response_line_id = response_line
-            doc_vals = self._process_response_line_doc_vals(res, linea, header)
-            if verifactu_invoice_entry.document_id:
-                verifactu_invoice_entry.document_id.write(doc_vals)
-            send_state = VERIFACTU_STATE_MAPPING.get(linea["EstadoRegistro"], "")
-            if send_state != "correct":
-                create_response_activity = True
-        updated_response_name = _("Verifactu sending")
-        if create_exception:
-            updated_response_name = _("Connection error with Verifactu")
-        elif create_response_activity:
-            updated_response_name = _("Incorrect invoices sent to Verifactu")
-        response.name = updated_response_name
-        if create_response_activity:
-            response.create_send_response_activity()
-        return True"""

@@ -14,7 +14,6 @@ VERIFACTU_PORT_NAME_MAPPING = {
     "out_refund": "SistemaVerifactu",
 }
 
-
 class AeatTaxAgency(models.Model):
     _name = "aeat.tax.agency"
 
@@ -35,11 +34,6 @@ class AeatTaxAgency(models.Model):
         address = getattr(self, wsdl_test_field) if company.verifactu_test else False
         if not address and company.verifactu_test:
             port_name += "Pruebas"
-        """raise Warning({
-             "wsdl": getattr(self, wsdl_field),
-             "address": address,
-             "port_name": port_name,
-        })"""
         return {
              "wsdl": getattr(self, wsdl_field),
              "address": address,

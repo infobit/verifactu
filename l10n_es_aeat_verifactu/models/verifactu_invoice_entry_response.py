@@ -98,7 +98,6 @@ class VerifactuInvoiceEntryResponse(models.Model):
                     "date_deadline": datetime.now(),
                 }
             )
-        #raise Warning(activity_vals)
         return self.env["mail.activity"].create(activity_vals)
 
     def complete_open_activity_on_exception(self):

@@ -14,14 +14,6 @@ class AeatVerifactuMappingRegistrationKeys(models.Model):
         required=True,
     )
 
-    """@api.multi
-    def name_get(self):
-        vals = []
-        for record in self:
-            name = "[{}]-{}".format(record.code, record.name)
-            vals.append(tuple([record.id, name]))
-        return vals"""
-
     @api.model
     def _get_verifactu_tax_keys(self):
         return self.env["account.fiscal.position"]._get_verifactu_tax_keys()
