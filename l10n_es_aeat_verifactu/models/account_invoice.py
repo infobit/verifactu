@@ -165,6 +165,35 @@ class account_invoice(models.Model):
         comodel_name='queue.job', column1='invoice_id', column2='job_id',
         string="Connector Jobs", copy=False,
     )
+    verifactu_invoice_entry_ids = fields.One2many(
+        "verifactu.invoice.entry",
+        inverse_name="document_id",
+        domain=lambda doc: [("model", "=", doc._name)],
+        string="VeriFactu Invoice Entry",
+        readonly=True,
+        copy=False,
+    )
+    verifactu_response_line_ids = fields.One2many(
+        "verifactu.invoice.entry.response.line",
+        inverse_name="document_id",
+        domain=lambda doc: [("model", "=", doc._name)],
+        string="Verifactu Response Lines",
+        readonly=True,
+        copy=False,
+    )
+    last_verifactu_invoice_entry_id = fields.Many2one(
+        "verifactu.invoice.entry",
+        string="VeriFactu Invoice Entry",
+        readonly=True,
+        copy=False,
+    )
+    last_verifactu_response_line_id = fields.Many2one(
+        "verifactu.invoice.entry.response.line",
+        string="Verifactu Response Line",
+        readonly=True,
+        copy=False,
+    )
+
 
     @api.model
     def _selection_verifactu_reference_models(self):
@@ -192,20 +221,21 @@ class account_invoice(models.Model):
                 #self._compute_verifactu_hash()
                 record._compute_verifactu_qr_url()
                 #LLAMADA AL ENVIO A VERIFACTU
-                record._process_verifactu_send()
+                #record._process_verifactu_send()
         return res
 
     @api.multi
+    def resend_verifactu(self):
+        for rec in self:
+            if (
+                rec.verifactu_state == "sent_w_errors"
+                and rec.last_verifactu_invoice_entry_id
+                and not rec.last_verifactu_invoice_entry_id.send_state == "not_sent"
+            ):
+                rec.verifactu_registration_date = datetime.now()
+                rec._generate_verifactu_chaining(entry_type="modify")
+    """@api.multi
     def send_verifactu(self):
-        """General public method for filtering out of the starting recordset the records
-        that shouldn't be sent to Verifactu:
-
-        - Documents of companies with Verifactu not enabled (through verifactu_enabled).
-        - Documents not applicable to be sent to Verifactu (through verifactu_enabled).
-        - Documents in non applicable states (for example, cancelled invoices).
-        - Documents already sent to Verifactu.
-        - Documents with sending jobs pending to be executed.
-        """
         #regenerar hash por si ha habido algún envío de una nueva factura.
         #self._get_verifactu_hash_string()
 
@@ -217,7 +247,7 @@ class account_invoice(models.Model):
                 or document.verifactu_state in ["sent", "cancelled"]
             ):
                 continue
-            document._process_verifactu_send()
+            document._process_verifactu_send()"""
 
     def _check_verifactu_configuration(self):
         if not self.company_id.tax_agency_id:
@@ -329,28 +359,51 @@ class account_invoice(models.Model):
             )
         )
 
-    def _generate_verifactu_chaining(self):
+    def _generate_verifactu_chaining(self, entry_type=False):
         self.ensure_one()
         #self.company_id.flush_recordset(["verifactu_last_document_id"])
         try:
             with self.env.cr.savepoint():
-                self.env.cr.execute(
+                """self.env.cr.execute(
                     "SELECT verifactu_last_document_id FROM"
                     " res_company WHERE id = %s FOR UPDATE NOWAIT",
                     [self.company_id.id],
                 )
                 result = self.env.cr.fetchone()[0]
-                prev_doc = False
-                if result:
+                prev_doc = False"""
+                self.env.cr.execute(
+                    "SELECT last_verifactu_invoice_entry_id FROM"
+                    " res_company WHERE id = %s FOR UPDATE NOWAIT",
+                    [self.company_id.id],
+                )
+                result = self.env.cr.fetchone()
+                previous_invoice_entry_id = result[0] if result and result[0] else False
+                """if result:
                     document_data = result.split(",")
                     prev_doc = self.env[document_data[0]].browse(int(document_data[1]))
-                self.verifactu_previous_document_id = prev_doc
+                #self.verifactu_previous_document_id = prev_doc"""
+ 
+                #crear registro en invoice entry y asignarlo en 
+                invoice_vals = {
+                    #"verifactu_chaining_id": chaining.id,
+                    "model": self._name,
+                    "document_id": self.id,
+                    "document_name": self.name,
+                    "company_id": self.company_id.id,
+                    "document_hash": "",
+                    "previous_invoice_entry_id": previous_invoice_entry_id,
+                }
+                if entry_type:
+                    invoice_vals["entry_type"] = entry_type
+                invoice_entry = self.env["verifactu.invoice.entry"].create(invoice_vals)
+                self.last_verifactu_invoice_entry_id = invoice_entry
+
                 verifactu_hash_values = self._get_verifactu_hash_string()
                 self.verifactu_hash_string = verifactu_hash_values
                 hash_string = sha256(verifactu_hash_values.encode("utf-8"))
                 #raise Warning(hash_string)
                 self.verifactu_hash = hash_string.hexdigest().upper()
-                if prev_doc:
+                """if prev_doc:
                     prev_doc.verifactu_next_document_id = self
                 doc_reference = "{model},{id}".format(model=self._name, id=self.id)
                 self.env.cr.execute(
@@ -358,8 +411,21 @@ class account_invoice(models.Model):
                     "verifactu_last_document_id = %s"
                     "WHERE id = %s",
                     [doc_reference, self.company_id.id],
-                )
+                )"""
                 #self.company_id.invalidate_recordset(["verifactu_last_document_id"])
+                # Generate JSON data for AEAT
+                inv_dict = self._get_verifactu_invoice_dict()
+                #except Exception:
+                #    # If JSON generation fails, store empty string
+                #    aeat_json_data = ""
+                invoice_entry.document_hash = hash_string.hexdigest().upper()
+                invoice_entry.aeat_json_data = json.dumps(inv_dict, indent=4)
+                self.env.cr.execute(
+                    "UPDATE res_company SET "
+                    "last_verifactu_invoice_entry_id = %s"
+                    "WHERE id = %s",
+                    [invoice_entry.id, self.company_id.id],
+                )
         except psycopg2.OperationalError as err:
             if err.pgcode == "55P03":  # could not obtain the lock
                 raise osv.except_osv(
@@ -503,9 +569,14 @@ class account_invoice(models.Model):
         return amount_total
 
     def _get_verifactu_previous_hash(self):
-        if self.verifactu_previous_document_id:
+        """if self.verifactu_previous_document_id:
             #raise Warning(self.verifactu_previous_document_id.verifactu_hash)
-            return self.verifactu_previous_document_id.verifactu_hash
+            return self.verifactu_previous_document_id.verifactu_hash"""
+        if self.last_verifactu_invoice_entry_id and self.last_verifactu_invoice_entry_id.previous_hash:
+           return self.last_verifactu_invoice_entry_id.previous_hash
+        else:
+           if self.verifactu_previous_document_id:
+               return self.verifactu_previous_document_id.verifactu_hash
         return ""
 
     def _get_verifactu_registration_date(self):
@@ -665,10 +736,17 @@ class account_invoice(models.Model):
         """TODO
         si no es el primer registro, hay que enviar el registro anterior.
         Cuando sepamos cuál es el registro anterior"""
-        if self.verifactu_previous_document_id:
+        """if self.verifactu_previous_document_id:
            prev_invoice = self.verifactu_previous_document_id  #self._get_previous_invoice()
         else:
-           prev_invoice = self._get_previous_invoice() 
+           prev_invoice = self._get_previous_invoice() """
+        if self.last_verifactu_invoice_entry_id and self.last_verifactu_invoice_entry_id.previous_invoice_entry_id:
+           prev_invoice = self.last_verifactu_invoice_entry_id.previous_invoice_entry_id.document_id
+        else:
+         if self.verifactu_previous_document_id:
+           prev_invoice = self.verifactu_previous_document_id
+         else:
+           prev_invoice = self._get_previous_invoice()
         if prev_invoice:
            valores = {
                "RegistroAnterior": {

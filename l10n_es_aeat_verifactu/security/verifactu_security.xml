@@ -1,0 +1,8 @@
+<openerp>
+  <data>
+    <record id="group_verifactu_responsible" model="res.groups">
+        <field name="name">Verifactu Responsible</field>
+        <field name="category_id" ref="base.module_category_accounting" />
+    </record>
+  </data>
+</openerp>

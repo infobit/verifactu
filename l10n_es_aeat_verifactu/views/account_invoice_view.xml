@@ -9,8 +9,8 @@
                 <button name="invoice_open" position="after">
                  <button
                     type="object"
-                    string="Send to Verifactu"
-                    name="send_verifactu"
+                    string="Resend to Verifactu"
+                    name="resend_verifactu"
                     groups="l10n_es_aeat.group_account_aeat"
                     attrs="{'invisible': ['|','|',('verifactu_enabled', '=', False), ('state', 'not in', ['open']), ('verifactu_state','in',['sent','cancelled'])]}"
                  />
@@ -40,6 +40,21 @@
                             <field name="verifactu_header_sent" />
                             <field name="verifactu_content_sent" />
                           </group>
+                          <group>
+                            <field name="verifactu_invoice_entry_ids" />
+                          </group>
+                          <group>
+                            <label for="verifactu_response_line_ids" />
+                          </group>
+                          <field name="verifactu_response_line_ids" nolabel="1">
+                                    <tree>
+                                        <field name="create_date" />
+                                        <field name="entry_id" />
+                                        <field
+                                            name="send_state"
+                                        />
+                                    </tree>
+                          </field>
                      </page>
                      <page string="Veri*FACTU Information" name="page_aeat"> <!--attrs="{'invisible': [('verifactu_enabled', '=', False)]}">-->
                       <group string="Veri*FACTU Information" name="group_aeat_information">
