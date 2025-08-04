@@ -207,21 +207,14 @@ class account_invoice(models.Model):
     def invoice_validate(self):
         res = super(account_invoice, self).invoice_validate() #action_number()
         for record in self:
-           if record.type == 'out_refund' and record.verifactu_refund_type:
+           if record.type == 'out_refund' and not record.verifactu_refund_type:
               raise osv.except_osv(
                    _('Aviso'),
                    _("Por favor, indique el tipo de factura rectificativa. (Verifactu refund type)"))
            if record.verifactu_enabled and record.verifactu_state == "not_sent":
-                #utc_time = pytz.utc.localize(datetime.utcnow())
-                #record._check_verifactu_configuration()
                 record.verifactu_registration_date = datetime.now() #utc_time #utc_time.astimezone(pytz.timezone('Europe/Madrid'))
                 record._generate_verifactu_chaining()
-                #record._process_verifactu_send()
-                #LLAMADA A LA GENERACIÓN DEL HASH Y QR
-                #self._compute_verifactu_hash()
                 record._compute_verifactu_qr_url()
-                #LLAMADA AL ENVIO A VERIFACTU
-                #record._process_verifactu_send()
         return res
 
     @api.multi
@@ -234,20 +227,6 @@ class account_invoice(models.Model):
             ):
                 rec.verifactu_registration_date = datetime.now()
                 rec._generate_verifactu_chaining(entry_type="modify")
-    """@api.multi
-    def send_verifactu(self):
-        #regenerar hash por si ha habido algún envío de una nueva factura.
-        #self._get_verifactu_hash_string()
-
-        valid_states = self._get_valid_document_states()
-        for document in self:
-            if (
-                not document.verifactu_enabled
-                or document.state not in valid_states
-                or document.verifactu_state in ["sent", "cancelled"]
-            ):
-                continue
-            document._process_verifactu_send()"""
 
     def _check_verifactu_configuration(self):
         if not self.company_id.tax_agency_id:
@@ -361,16 +340,8 @@ class account_invoice(models.Model):
 
     def _generate_verifactu_chaining(self, entry_type=False):
         self.ensure_one()
-        #self.company_id.flush_recordset(["verifactu_last_document_id"])
         try:
             with self.env.cr.savepoint():
-                """self.env.cr.execute(
-                    "SELECT verifactu_last_document_id FROM"
-                    " res_company WHERE id = %s FOR UPDATE NOWAIT",
-                    [self.company_id.id],
-                )
-                result = self.env.cr.fetchone()[0]
-                prev_doc = False"""
                 self.env.cr.execute(
                     "SELECT last_verifactu_invoice_entry_id FROM"
                     " res_company WHERE id = %s FOR UPDATE NOWAIT",
@@ -378,14 +349,9 @@ class account_invoice(models.Model):
                 )
                 result = self.env.cr.fetchone()
                 previous_invoice_entry_id = result[0] if result and result[0] else False
-                """if result:
-                    document_data = result.split(",")
-                    prev_doc = self.env[document_data[0]].browse(int(document_data[1]))
-                #self.verifactu_previous_document_id = prev_doc"""
  
                 #crear registro en invoice entry y asignarlo en 
                 invoice_vals = {
-                    #"verifactu_chaining_id": chaining.id,
                     "model": self._name,
                     "document_id": self.id,
                     "document_name": self.name,
@@ -401,23 +367,9 @@ class account_invoice(models.Model):
                 verifactu_hash_values = self._get_verifactu_hash_string()
                 self.verifactu_hash_string = verifactu_hash_values
                 hash_string = sha256(verifactu_hash_values.encode("utf-8"))
-                #raise Warning(hash_string)
                 self.verifactu_hash = hash_string.hexdigest().upper()
-                """if prev_doc:
-                    prev_doc.verifactu_next_document_id = self
-                doc_reference = "{model},{id}".format(model=self._name, id=self.id)
-                self.env.cr.execute(
-                    "UPDATE res_company SET "
-                    "verifactu_last_document_id = %s"
-                    "WHERE id = %s",
-                    [doc_reference, self.company_id.id],
-                )"""
-                #self.company_id.invalidate_recordset(["verifactu_last_document_id"])
                 # Generate JSON data for AEAT
                 inv_dict = self._get_verifactu_invoice_dict()
-                #except Exception:
-                #    # If JSON generation fails, store empty string
-                #    aeat_json_data = ""
                 invoice_entry.document_hash = hash_string.hexdigest().upper()
                 invoice_entry.aeat_json_data = json.dumps(inv_dict, indent=4)
                 self.env.cr.execute(
@@ -544,21 +496,10 @@ class account_invoice(models.Model):
         it should be directly in l10n_es_aeat
         """
         serial_number = (self.number or "")[0:60]
-        #if self.thirdparty_invoice:
-        #    serial_number = self.thirdparty_number[0:60]
         return serial_number
 
     def _get_verifactu_issuer(self):
         return self.company_id.partner_id.vat[2:] #_parse_aeat_vat_info()[2]
-
-    """def _get_verifactu_amount_tax(self):
-        #return self.amount_tax #_signed
-        if self.type == 'out_refund':
-           amount_tax = - self.amount_tax
-        else:
-           amount_tax = self.amount_tax
-        return amount_tax"""
-
 
     def _get_verifactu_amount_total(self):
         #return self.amount_total #_signed
@@ -569,9 +510,6 @@ class account_invoice(models.Model):
         return amount_total
 
     def _get_verifactu_previous_hash(self):
-        """if self.verifactu_previous_document_id:
-            #raise Warning(self.verifactu_previous_document_id.verifactu_hash)
-            return self.verifactu_previous_document_id.verifactu_hash"""
         if self.last_verifactu_invoice_entry_id and self.last_verifactu_invoice_entry_id.previous_hash:
            return self.last_verifactu_invoice_entry_id.previous_hash
         else:
@@ -618,7 +556,6 @@ class account_invoice(models.Model):
             "Huella={}&".format(previousHash) +
             "FechaHoraHusoGenRegistro={}".format(registrationDate)
         )
-        #raise Warning(verifactu_hash_string)
         return verifactu_hash_string
 
 
@@ -629,7 +566,6 @@ class account_invoice(models.Model):
         self.verifactu_hash_string = hash_string
         self.verifactu_hash = hash_string.hexdigest().upper()
         return self.verifactu_hash
-        #raise Warning(hash_string.hexdigest().upper())
         #return hash_string.hexdigest().upper()
 
     @api.model
@@ -662,13 +598,9 @@ class account_invoice(models.Model):
             "NombreRazonEmisor": self.company_id.name[0:120],
             "TipoFactura": verifactu_doc_type,
         }
-        #raise Warning(inv_dict)
         if self.type == "out_refund":
             inv_dict["TipoRectificativa"] = self.verifactu_refund_type or "I"
-            if not self.verifactu_refund_type:
-               self.verifactu_refund_typee = "I"
             origin = self.origin_invoices_ids[0]
-            #raise Warning(origin)
             if origin:
                if self.verifactu_refund_type == "I":
                 inv_dict["FacturasRectificadas"] = []
@@ -685,12 +617,6 @@ class account_invoice(models.Model):
                         }
                     }
                     inv_dict["FacturasRectificadas"].append(origin_data)
-                    """inv_dict["ImporteRectificacion"] = {
-                     "BaseRectificada": origin.amount_untaxed,   #abs(origin.amount_untaxed_signed),
-                     "CuotaRectificada": round(abs(
-                         origin.amount_total - origin.amount_untaxed
-                     ),2),
-                    }"""
         inv_dict.update(
             {
                 "DescripcionOperacion": self._get_verifactu_description(),
@@ -704,9 +630,6 @@ class account_invoice(models.Model):
             )
         elif verifactu_doc_type in ("F2", "R5"):
             inv_dict.update({"FacturaSinIdentifDestinatarioArt61d": "S"})
-        #registrationDate = self._get_verifactu_registration_date()
-        #raise Warning(registrationDate)
-        #raise Warning(inv_dict)
         inv_dict.update(
             {
                 "Desglose": taxes_dict,
@@ -719,7 +642,6 @@ class account_invoice(models.Model):
                 "Huella": self.verifactu_hash,
             }
         )
-        #raise Warning(inv_dict)
         if self.verifactu_state == "sent_w_errors":
             inv_dict.update(
                 {
@@ -729,17 +651,12 @@ class account_invoice(models.Model):
                 }
             )
         registroAlta.setdefault("RegistroAlta", inv_dict)
-        #raise Warning(registroAlta)
         return registroAlta
 
     def _get_chaining_invoice_dict(self):
         """TODO
         si no es el primer registro, hay que enviar el registro anterior.
         Cuando sepamos cuál es el registro anterior"""
-        """if self.verifactu_previous_document_id:
-           prev_invoice = self.verifactu_previous_document_id  #self._get_previous_invoice()
-        else:
-           prev_invoice = self._get_previous_invoice() """
         if self.last_verifactu_invoice_entry_id and self.last_verifactu_invoice_entry_id.previous_invoice_entry_id:
            prev_invoice = self.last_verifactu_invoice_entry_id.previous_invoice_entry_id.document_id
         else:
@@ -787,7 +704,6 @@ class account_invoice(models.Model):
             tax_dict[key] = tax_line["amount"] + tax_lines[req_tax]["amount"]
             tax_dict["TipoRecargoEquivalencia"] = req_tax.amount
             tax_dict["CuotaRecargoEquivalencia"] = tax_lines[req_tax]["amount"]
-        #raise Warning(tax_dict)
         return tax_dict
 
     def _get_verifactu_tax_req(self, tax):
@@ -805,9 +721,6 @@ class account_invoice(models.Model):
         )
         req_tax = []
         req_tax = re_lines.mapped("tax_ids") & taxes_req
-        #raise Warning(req_tax)
-        #if len(req_tax) > 1:
-        #    raise UserError(_("There's a mismatch in taxes for RE. Check them."))
         return req_tax
 
     def _get_verifactu_taxes_and_total(self):
@@ -837,7 +750,6 @@ class account_invoice(models.Model):
             #BUSCAR IMPUESTO
             imp = self.env['account.tax'].search([('name', '=', tax_line.name)])
             if imp:
-               #for tax_line in inv_line.invoice_line_tax_id:
                if imp in taxes_not_in_total:
                    not_in_amount_total += tax_line["amount"]
                elif imp in base_not_in_total:
@@ -861,10 +773,8 @@ class account_invoice(models.Model):
                        tax_dict["CuotaRepercutida"] = -tax_line.amount
                     #RECARGO DE EQUIVALENCIA 
                     reqeq = self.env['account.fiscal.position.tax'].search([('tax_src_id', '=', imp.id), ('tax_dest_id', 'in', taxes_req.ids)])
-                    #raise Warning(reqeq[0].tax_dest_id.name)
                     if reqeq:
                       tax_line_req = self.tax_line.filtered(lambda x: x.name == reqeq[0].tax_dest_id.name)
-                      #raise Warning(tax_line_req)
                       if tax_line_req:
                          tipo_recargo = round(reqeq[0].tax_dest_id.amount * 100,2)
                          cuota_recargo = tax_line_req[0].amount
@@ -878,7 +788,6 @@ class account_invoice(models.Model):
                 not_in_taxes += tax_line["amount"]
                elif imp not in taxes_req:
                 raise ValidationError(_("%s tax is not mapped to Verifactu." % imp.name)) 
-        #raise Warning(taxes_dict)
         if self.type == 'out_refund':
            amount_tax = -self.amount_tax - not_in_taxes
         else:
@@ -968,21 +877,6 @@ class account_invoice(models.Model):
                 },
             }
         }
-
-    """def _get_verifactu_receiver_dict(self):
-        self.ensure_one()
-        receiver = self._aeat_get_partner()
-        vat_info = receiver.vat[2:] #_parse_aeat_vat_info()
-        return {
-            "IDDestinatario": {
-                "NombreRazon": receiver.name,
-                "NIF": receiver.vat[2:], #vat_info[2:0],
-                # "IDOtro": {
-                #     "IDType": vat_info[1],
-                #     "ID": vat_info[0],
-                # }
-            }
-        }"""
 
     #CANCELAR FACTURA EN VERIFACTU
     def cancel_verifactu(self):
@@ -1108,9 +1002,6 @@ class account_invoice(models.Model):
         #raise Warning(inv_dict)
         return inv_dict
 
-    #def _get_aeat_invoice_dict_out(self, cancel=False):
-    #    raise NotImplementedError
-
 
     def _get_verifactu_developer_dict(self):
         #Datos del desarrollador del sistema informático
@@ -1143,32 +1034,11 @@ class account_invoice(models.Model):
             },
         }
 
-    """def _get_verifactu_developer_dict(self):
-        # Datos del desarrollador del sistema informático
-        return {
-            "NombreRazon": _("Asoc Española de Odoo"),
-            "NIF": "G87846952",
-            "NombreSistemaInformatico": "odoo",
-            "IdSistemaInformatico": "11",
-            "Version": "1.0",
-            "NumeroInstalacion": "1",
-            "TipoUsoPosibleSoloVerifactu": "N",
-            "TipoUsoPosibleMultiOT": "S",
-            "IndicadorMultiplesOT": "S",
-            "IDOtro": {
-                "IDType": "",
-                "ID": "",
-            },
-        }old"""
-
     def _get_previous_invoice(self):
         prev_invoice = self.search([('state', 'in', ['open', 'paid']),
         ('company_id', '=', self.company_id.id), ('verifactu_hash', '!=', False), ('verifactu_state', '!=', 'not_sent'), ('create_date', '<', self.create_date)], order='create_date desc')
         if prev_invoice:
            return prev_invoice[0]
-        #else:
-        #   return []
-        #   raise ValidationError(_("No se encuentra factura previa"))
 
     def _aeat_check_exceptions(self):
         """Inheritable method for exceptions control when sending veri*FACTU invoices."""
@@ -1199,8 +1069,6 @@ class account_invoice(models.Model):
     def _get_verifactu_version(self):
         return VERIFACTU_VERSION
 
-    def _compute_verifactu_refund_type(self):
-        self.verifactu_refund_type = False
 
     def _is_aeat_simplified_invoice(self):
         """Inheritable method to allow control when an
@@ -1233,7 +1101,6 @@ class account_invoice(models.Model):
             try:
                 mapping_key = document._get_mapping_key()
                 serv = document._connect_verifactu(mapping_key)
-                #raise Warning(serv)
                 doc_vals["verifactu_content_sent"] = json.dumps(inv_dict, indent=4)
                 if mapping_key in ["out_invoice", "out_refund"]:
                     res = serv.RegFactuSistemaFacturacion(header, inv_dict)
@@ -1347,7 +1214,6 @@ class account_invoice(models.Model):
             ]
         criteria += [('company_id', '=', self.company_id.id)]
         mapping_taxes[tax_template] = tax_obj.search(criteria)
-        #raise Warning(mapping_taxes)
         return mapping_taxes[tax_template]
 
 
@@ -1452,7 +1318,6 @@ class account_invoice(models.Model):
             documents = all_documents[:batch]
             remaining_documents = all_documents - documents
             documents._process_verifactu_send()
-        #raise Warning(remaining_documents)
         return remaining_documents
 
     @api.model
