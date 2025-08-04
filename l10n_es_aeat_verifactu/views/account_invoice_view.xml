@@ -39,6 +39,13 @@
                             <field name="verifactu_return"/>
                             <field name="verifactu_header_sent" />
                             <field name="verifactu_content_sent" />
+                            <field name="verifactu_hash_string" />
+                            <field name="verifactu_hash" />
+                            <field name="verifactu_previous_document_id" />
+                            <field name="verifactu_next_document_id" />
+                            <field name="verifactu_macrodata"/>
+                            <field name="verifactu_qr_url"/>
+                            <field name="qr_image"/>
                           </group>
                           <group>
                             <field name="verifactu_invoice_entry_ids" />
@@ -60,18 +67,11 @@
                       <group string="Veri*FACTU Information" name="group_aeat_information">
                         <field name="verifactu_enabled" invisible="0" readonly="1" />
                         <field name="verifactu_description" />
-                        <field name="verifactu_refund_type" />
-                        <field name="verifactu_refund_specific_invoice_type" />
                         <field name="verifactu_tax_key" />
                         <field name="verifactu_registration_key" />
-                        <field name="verifactu_hash_string" />
-                        <field name="verifactu_hash" />
                         <field name="verifactu_registration_date" readonly="1" />
-                        <field name="verifactu_previous_document_id" />
-                        <field name="verifactu_next_document_id" />
-                        <field name="verifactu_macrodata"/>
-                        <field name="verifactu_qr_url"/>
-                        <field name="qr_image"/>
+                        <field name="verifactu_refund_type" />
+                        <field name="verifactu_refund_specific_invoice_type" />
                       </group>
                      </page>
                     </notebook>
