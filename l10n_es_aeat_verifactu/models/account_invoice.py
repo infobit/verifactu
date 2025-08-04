@@ -791,7 +791,10 @@ class account_invoice(models.Model):
     #OBTENCION QR URL INVOICE AEAT
     def _compute_verifactu_qr_url(self):
         for move in self: #.filtered(lambda m: m.inalterable_hash):
-            base_url = move.company_id.url_qrverifactu_test
+            if move.company_id.verifactu_test:
+               base_url = move.company_id.tax_agency_id.verifactu_qr_base_url_test_address
+            else:
+               base_url = move.company_id.tax_agency_id.verifactu_qr_base_url
             _taxes_dict, _amount_tax, amount_total = self._get_verifactu_taxes_and_total()
             urlqrinvoice = base_url
             if move.company_id.vat:
@@ -804,16 +807,19 @@ class account_invoice(models.Model):
                urlqrinvoice += "&importe=" + str(amount_total)
             move.verifactu_qr_url = urlqrinvoice
             # Generar el código QR
-            qr = qrcode.QRCode(
+            """qr = qrcode.QRCode(
                version=1,  # Tamaño del QR: 1 es el más pequeño
                error_correction=qrcode.constants.ERROR_CORRECT_L,  # Nivel de corrección de errores
                box_size=10,  # Tamaño de los cuadros
                border=4,  # Tamaño del borde
+            )"""
+            qr = qrcode.QRCode(
+                border=0, error_correction=qrcode.constants.ERROR_CORRECT_M
             )
             qr.add_data(urlqrinvoice)
-            qr.make(fit=True)
+            qr.make() #(fit=True)
             # Crear una imagen del QR
-            qr_image = qr.make_image(fill_color="black", back_color="white")
+            qr_image = qr.make_image() #fill_color="black", back_color="white")
             # Guardar la imagen en un archivo
             temp_file = io.BytesIO() #StringIO()
             qr_image.save(temp_file)
@@ -1070,6 +1076,7 @@ class account_invoice(models.Model):
         service = client._get_service("sfVerifactu")
         port = client._get_port(service, port_name)
         address = address or port.binding_options["address"]
+        raise Warning(address)
         return client.create_service(port.binding.name, address)
 
     @api.multi

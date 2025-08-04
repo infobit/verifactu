@@ -42,14 +42,6 @@
                             <field name="last_verifactu_invoice_entry_id"/>
                         </group>
                     </group>
-                    <group>
-                       <group name="QR Invoice">
-                         <field name="url_qrverifactu"/>
-                         <field name="url_qrverifactu_test"/>
-                         <field name="url_qrnoverifactu"/>
-                         <field name="url_qrnoverifactu_test"/>
-                       </group>
-                    </group>
                     <group name="verifactu_connector" string="Connector config">
                             <field name="verifactu_use_connector" />
                             <field name="verifactu_send_mode"

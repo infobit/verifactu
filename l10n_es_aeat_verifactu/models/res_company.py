@@ -19,10 +19,6 @@ class res_company(models.Model):
     verifactu_enabled = fields.Boolean(string="Enable veri*FACTU")
     verifactu_test = fields.Boolean(string="Is it the veri*FACTU test environment?")
     verifactu_description = fields.Text(default="/", size=500, help="The description for Verifactu invoices if not set",)
-    url_qrverifactu_test = fields.Char(string="Url QR Verifactu Pruebas", default="https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR?")
-    url_qrverifactu = fields.Char(string="Url QR Verifactu", default="https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR?")
-    url_qrnoverifactu_test = fields.Char(string="Url QR No Verifactu", default="https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQRNoVerifactu?")
-    url_qrnoverifactu = fields.Char(string="Url QR No Verifactu", default="https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQRNoVerifactu?")
     verifactu_last_document_id = fields.Reference(
         string="Last Verifactu Document",
         selection="_selection_verifactu_reference_models",
