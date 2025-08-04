@@ -885,7 +885,10 @@ class account_invoice(models.Model):
     #OBTENCION QR URL INVOICE AEAT
     def _compute_verifactu_qr_url(self):
         for move in self: #.filtered(lambda m: m.inalterable_hash):
-            base_url = move.company_id.url_qrverifactu_test
+            if move.company_id.verifactu_test:
+               base_url = move.company_id.tax_agency_id.verifactu_qr_base_url_test_address
+            else:
+               base_url = move.company_id.tax_agency_id.verifactu_qr_base_url             
             #raise Warning(base_url)
             _taxes_dict, _amount_tax, amount_total = self._get_verifactu_taxes_and_total()
             urlqrinvoice = base_url
