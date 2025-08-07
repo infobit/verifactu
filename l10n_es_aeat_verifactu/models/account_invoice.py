@@ -28,19 +28,6 @@ import qrcode
 from cStringIO import StringIO
 import psycopg2
 
-#CONECTOR
-try:
-    from openerp.addons.connector.queue.job import job
-    from openerp.addons.connector.session import ConnectorSession
-except ImportError:
-    _logger.debug('Can not `import connector`.')
-    import functools
-
-    def empty_decorator_factory(*argv, **kwargs):
-        return functools.partial
-
-    job = empty_decorator_factory
-
 #VARIABLES VERIFACTU
 ####################
 VERIFACTU_VERSION = 1.0
@@ -161,10 +148,6 @@ class account_invoice(models.Model):
     )
     verifactu_send_date = fields.Datetime(index=True, copy=False)
     verifactu_registration_date = fields.Datetime(copy=False)
-    verifactu_invoice_jobs_ids = fields.Many2many(
-        comodel_name='queue.job', column1='invoice_id', column2='job_id',
-        string="Connector Jobs", copy=False,
-    )
     verifactu_invoice_entry_ids = fields.One2many(
         "verifactu.invoice.entry",
         inverse_name="document_id",
@@ -384,29 +367,6 @@ class account_invoice(models.Model):
                    _('Aviso'),
                    _("Could not obtain last document sent to verifactu.")) #from err
             raise
-
-    def _process_verifactu_send(self):
-        queue_obj = self.env['queue.job'].sudo()
-        for record in self:
-            record.verifactu_send_date = fields.Datetime.now()
-            company = record.company_id
-            if not company.verifactu_use_connector:
-               record.confirm_verifactu_one_document()
-            else:
-               eta = self.env.context.get('override_eta',
-                                           company._get_verifactu_eta())
-               ctx = self.env.context.copy()
-               ctx.update(company_id=company.id)
-               session = ConnectorSession(
-                    self.env.cr, SUPERUSER_ID, context=ctx,
-               )
-               new_delay = confirm_one_invoice_verifactu.delay(
-                    session, 'account.invoice', record.id,
-                    eta=eta if not record.verifactu_send_failed else False,
-               )
-               record.sudo().verifactu_invoice_jobs_ids |= queue_obj.search(
-                    [('uuid', '=', new_delay)], limit=1,
-               )
 
     def confirm_verifactu_one_document(self):
         self.sudo()._send_document_to_verifactu()
@@ -1300,44 +1260,4 @@ class account_invoice(models.Model):
                     "value of the parameter."
                 )
             )
-
-
-    @api.model
-    def _send_to_verifactu_valid(self):
-        remaining_documents = self.env["account.invoice"]
-        documents = all_documents = self.search(
-            [
-                ("state", "in", self._get_verifactu_valid_document_states()),
-                (
-                    "verifactu_state",
-                    "not in",
-                    ["sent", "cancelled"],
-                ),
-                ("verifactu_send_date", "<=", fields.Datetime.now()),
-            ]
-        )
-        if documents:
-            batch = self._get_verifactu_batch()
-            documents = all_documents[:batch]
-            remaining_documents = all_documents - documents
-            documents._process_verifactu_send()
-        return remaining_documents
-
-    @api.model
-    def _send_to_verifactu(self):
-        remaining_documents = self._send_to_verifactu_valid()
-        if remaining_documents:
-            verifactu_send_cron = self.env.ref(
-                "l10n_es_aeat_verifactu.invoice_send_to_verifactu"
-            )
-            self.env["ir.cron.trigger"].sudo().create(
-                {"cron_id": verifactu_send_cron.id, "call_at": fields.Datetime.now()}
-            )
-
-@job(default_channel='root.invoice_validate_verifactu')
-def confirm_one_invoice_verifactu(session, model_name, invoice_id):
-    model = session.env[model_name]
-    invoice = model.browse(invoice_id)
-    if invoice.exists():
-       invoice._send_document_to_verifactu()
 

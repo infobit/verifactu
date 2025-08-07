@@ -64,12 +64,35 @@ class res_company(models.Model):
     verifactu_sent_time = fields.Float(string="Sent time")
     verifactu_delay_time = fields.Float(string="Delay time")
 
-
     def write(self, cr, uid, ids, vals, context=None):
         res = super(res_company, self).write(cr, uid, ids, vals, context=context)
-        if "verifactu_enabled" in vals:
-            for company in self:
-                if vals.get("verifactu_enabled", False):
+
+        if vals.get("verifactu_enabled", False):
+           company_ids = ids if isinstance(ids, list) else [ids]
+           company_objs = self.browse(cr, uid, company_ids, context=context)
+
+           journal_obj = self.pool.get("account.journal")
+
+           for company in company_objs:
+            journal_ids = journal_obj.search(
+                cr, uid,
+                [("company_id", "=", company.id), ("type", "=", "sale")],
+                context=context
+            )
+            if journal_ids:
+                journal_obj.write(
+                    cr, uid, journal_ids,
+                    {"verifactu_enabled": True},
+                    context=context
+                )
+
+        return res
+    """def write(self, cr, uid, ids, vals, context=None):
+        res = super(res_company, self).write(cr, uid, ids, vals, context=context)
+        #if "verifactu_enabled" in vals:
+        for company in self:
+            #company = self
+            if vals.get("verifactu_enabled", False):
                     journals = self.env["account.journal"].search(
                         [
                             ("company_id", "=", company.id),
@@ -78,7 +101,7 @@ class res_company(models.Model):
                     )
                     if journals:
                         journals.write({"verifactu_enabled": True})
-        return res
+        return res"""
 
     def _get_verifactu_eta(self):
         if self.verifactu_send_mode == 'fixed':
