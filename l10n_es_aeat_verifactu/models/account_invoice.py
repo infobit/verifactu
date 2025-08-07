@@ -31,17 +31,6 @@ import io
 #from cStringIO import StringIO
 import psycopg2
 
-#CONECTOR
-try:
-    from odoo.addons.queue_job.job import job
-except ImportError:
-    _logger.debug('Can not `import queue job`.')
-    import functools
-
-    def empty_decorator_factory(*argv, **kwargs):
-        return functools.partial
-    job = empty_decorator_factory
-
 #VARIABLES VERIFACTU
 ####################
 VERIFACTU_VERSION = 1.0
@@ -161,11 +150,6 @@ class account_invoice(models.Model):
     )
     verifactu_send_date = fields.Datetime(index=True, copy=False)
     verifactu_registration_date = fields.Datetime(copy=False)
-    verifactu_invoice_jobs_ids = fields.Many2many(
-        comodel_name='queue.job', column1='invoice_id', column2='job_id',
-        string="Connector Jobs", copy=False,
-    )
-
     verifactu_invoice_entry_ids = fields.One2many(
         "verifactu.invoice.entry",
         inverse_name="document_id",
@@ -374,24 +358,6 @@ class account_invoice(models.Model):
                 ) from err
             raise
 
-    def _process_verifactu_send(self):
-        queue_obj = self.env['queue.job'].sudo()
-        for record in self:
-            record.verifactu_send_date = fields.Datetime.now()
-            company = record.company_id
-            if not company.verifactu_use_connector:
-               record.confirm_verifactu_one_document()
-            else:
-               eta = company._get_verifactu_eta()
-               new_delay = record.sudo().with_context(
-                    company_id=company.id
-                ).with_delay(
-                    eta=eta if not record.verifactu_send_failed else False,
-                ).confirm_one_invoice_verifactu()
-               job = queue_obj.search([
-                    ('uuid', '=', new_delay.uuid)
-               ], limit=1)
-               record.sudo().verifactu_invoice_jobs_ids |= job
 
     @api.depends("type")
     def _compute_verifactu_refund_type(self):
@@ -703,18 +669,18 @@ class account_invoice(models.Model):
                       tax_dict["BaseImponibleOimporteNoSujeto"] = -tax_line.base
                    if operation_type not in ['N1', 'N2']:
                     tax_dict["TipoImpositivo"] = imp.amount
-                    tax_dict["CuotaRepercutida"] = tax_line.amount
+                    tax_dict["CuotaRepercutida"] = round(tax_line.amount,2)
                     if tax_line.invoice_id.type == 'out_refund':
-                       tax_dict["CuotaRepercutida"] = -tax_line.amount
+                       tax_dict["CuotaRepercutida"] = -round(tax_line.amount,2)
                     #RECARGO DE EQUIVALENCIA 
                     reqeq = self.env['account.fiscal.position.tax'].search([('tax_src_id', '=', imp.id), ('tax_dest_id', 'in', taxes_req.ids)])
                     if reqeq:
                       tax_line_req = self.tax_line_ids.filtered(lambda x: x.name == reqeq[0].tax_dest_id.name)
                       if tax_line_req:
                          tipo_recargo = reqeq[0].tax_dest_id.amount
-                         cuota_recargo = tax_line_req[0].amount
+                         cuota_recargo = round(tax_line_req[0].amount,2)
                          if tax_line.invoice_id.type == 'out_refund':
-                            cuota_recargo = -tax_line_req[0].amount
+                            cuota_recargo = -round(tax_line_req[0].amount,2)
                          tax_dict['TipoRecargoEquivalencia'] = tipo_recargo
                          tax_dict['CuotaRecargoEquivalencia'] = cuota_recargo
                    taxes_dict["DetalleDesglose"].append(tax_dict)
@@ -1193,41 +1159,3 @@ class account_invoice(models.Model):
                     "value of the parameter."
                 )
             ) from e
-
-    @api.model
-    def _send_to_verifactu_valid(self):
-        remaining_documents = self.env["account.invoice"]
-        documents = all_documents = self.search(
-            [
-                ("state", "in", self._get_verifactu_valid_document_states()),
-                (
-                    "verifactu_state",
-                    "not in",
-                    ["sent", "cancelled"],
-                ),
-                ("verifactu_send_date", "<=", fields.Datetime.now()),
-            ]
-        )
-        if documents:
-            batch = self._get_verifactu_batch()
-            documents = all_documents[:batch]
-            remaining_documents = all_documents - documents
-            documents._process_verifactu_send()
-        raise Warning(remaining_documents)
-        return remaining_documents
-
-    @api.model
-    def _send_to_verifactu(self):
-        remaining_documents = self._send_to_verifactu_valid()
-        if remaining_documents:
-            verifactu_send_cron = self.env.ref(
-                "l10n_es_aeat_verifactu.invoice_send_to_verifactu"
-            )
-            self.env["ir.cron.trigger"].sudo().create(
-                {"cron_id": verifactu_send_cron.id, "call_at": fields.Datetime.now()}
-            )
-
-    @job(default_channel='root.invoice_validate_verifactu')
-    @api.multi
-    def confirm_one_invoice_verifactu(self):
-        self._send_document_to_verifactu()
