@@ -269,6 +269,14 @@ class account_invoice(models.Model):
                 )
                 % self.name
             )
+        if self.date_invoice > fields.Datetime.now():
+            raise UserError(
+                _(
+                    "La factura  %s no puede ser validada y enviada a Verifactu "
+                    "porque tiene fecha factura superior a la actual."
+                )
+                % self.name
+            )
         return
 
     def _check_all_taxes_mapped(self):
