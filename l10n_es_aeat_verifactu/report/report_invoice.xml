@@ -3,7 +3,7 @@
     <data>
         <template id="report_invoice_verifactu_qr" inherit_id="account.report_invoice_document">
              <xpath expr="//div[@class='row']" position="before">
-              <t t-if="o.company_id.verifactu_enabled">
+              <t t-if="o.verifactu_enabled and o.verifactu_state == 'sent' and not o.company_id.verifactu_test">
                <div style="-webkit-writing-mode:horizontal-lr; font-size:10px;position:absolute; z-index:0;">
                 <!--<div id="l10n_es_verifactu_id" class="row text-center">
                     <div class="mt32 w-100">
