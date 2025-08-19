@@ -12,3 +12,6 @@ class VerifactuDeveloper(models.Model):
     sif_id = fields.Char(string="SIF ID", required=True)
     version = fields.Char(default="1.0", required=True)
     installation_number = fields.Integer(default=1, required=True)
+    responsibility_declaration = fields.Binary(
+        attachment=True, copy=False, tracking=True
+    )
