@@ -195,6 +195,7 @@ class account_invoice(models.Model):
                    _('Aviso'),
                    _("Por favor, indique el tipo de factura rectificativa. (Verifactu refund type)"))
            if record.verifactu_enabled and record.verifactu_state == "not_sent":
+                record._check_verifactu_configuration()
                 record.verifactu_registration_date = datetime.now() #utc_time #utc_time.astimezone(pytz.timezone('Europe/Madrid'))
                 record._generate_verifactu_chaining()
                 record._compute_verifactu_qr_url()
@@ -272,6 +273,15 @@ class account_invoice(models.Model):
                 _(
                     "The invoice %s cannot be sent to Verifactu because it "
                     "does not have all taxes mapped."
+                )
+                % self.name
+            )
+        if self.date_invoice > fields.Datetime.now():
+            raise osv.except_osv(
+                _("Aviso"),
+                _(
+                    "La factura  %s no puede ser validada "
+                    "porque tiene fecha factura superior a la actual."
                 )
                 % self.name
             )
