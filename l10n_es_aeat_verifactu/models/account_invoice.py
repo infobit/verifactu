@@ -272,7 +272,7 @@ class account_invoice(models.Model):
         if self.date_invoice > fields.Datetime.now():
             raise UserError(
                 _(
-                    "La factura  %s no puede ser validada y enviada a Verifactu "
+                    "La factura  %s no puede ser validada "
                     "porque tiene fecha factura superior a la actual."
                 )
                 % self.name
