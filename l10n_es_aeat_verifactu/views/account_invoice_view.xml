@@ -148,10 +148,12 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <!-- Añadimos el nuevo decoration -->
-                    <attribute name="decoration-danger">verifactu_state in ['not_sent', 'sent_w_errors']</attribute>
+                    <attribute name="decoration-danger">verifactu_state in ['not_sent', 'sent_w_errors'] and verifactu_enabled and verifactu_hash_string</attribute>
                 </xpath>
                 <field name="state" position="after">
                     <field name="verifactu_state"/>
+                    <field name="verifactu_enabled"/>
+                    <field name="verifactu_hash_string" invisible="1"/>
                 </field>
             </field>
         </record>   
