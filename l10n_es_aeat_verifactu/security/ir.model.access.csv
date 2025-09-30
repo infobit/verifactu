@@ -1,6 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_model_certificate_verifactu,verifactu.certificate_verifactu,model_certificate_verifactu,l10n_es_aeat.group_account_aeat,1,1,1,1
 access_model_aeat_tax_agency,verifactu.aeat_tax_agency,model_aeat_tax_agency,base.group_system,1,1,1,1
+access_model_aeat_tax_agency,verifactu.aeat_tax_agency,model_aeat_tax_agency,account.group_account_invoice,1,0,0,0
 access_model_aeat_verifactu_map_admin,aeat.verifactu.map admin,model_aeat_verifactu_map,base.group_system,1,1,1,1
 access_model_aeat_verifactu_map_aeat,aeat.verifactu.map aeat,model_aeat_verifactu_map,l10n_es_aeat.group_account_aeat,1,0,0,0
 access_model_aeat_verifactu_map_lines_admin,aeat.verifactu.map.lines admin,model_aeat_verifactu_map_lines,base.group_system,1,1,1,1
