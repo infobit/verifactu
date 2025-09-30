@@ -277,6 +277,14 @@ class account_invoice(models.Model):
                 )
                 % self.name
             )
+        if not self.partner_id.vat:
+            raise UserError(
+                _(
+                    "The document %s cannot be sent to Verifactu because your "
+                    "partner does not vat assigned."
+                )
+                % self.name
+            )
         return
 
     def _check_all_taxes_mapped(self):
@@ -546,9 +554,10 @@ class account_invoice(models.Model):
         if self.type == "out_refund":
             inv_dict["TipoRectificativa"] = self.verifactu_refund_type
             if self.verifactu_refund_type == "I":
-                inv_dict["FacturasRectificadas"] = []
+                #inv_dict["FacturasRectificadas"] = []
                 origin = self.refund_invoice_id
                 if origin:
+                    inv_dict["FacturasRectificadas"] = []
                     orig_document_date = self._change_date_format(
                         origin._get_document_date()
                     )

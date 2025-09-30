@@ -321,6 +321,7 @@ class VerifactuInvoiceEntry(models.Model):
             if rec.document_id:
                 inv_dict = rec.document_id._get_verifactu_invoice_dict()
                 registro_factura_list.append(inv_dict)
+        #raise Warning(registro_factura_list)
         try:
             mapping_key = rec.document_id._get_mapping_key()
             serv = rec._connect_verifactu(mapping_key)
