@@ -140,17 +140,19 @@
                 </filter>
             </field>
         </record>
-        <record id="view_invoice_tree_verifactu" model="ir.ui.view">
+        <record id="view_invoice_wtree_verifactu" model="ir.ui.view">
             <field name="name">Invoice(verifactu)</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <!-- Añadimos el nuevo decoration -->
-                    <attribute name="decoration-danger">verifactu_state in ['not_sent', 'sent_w_errors']</attribute>
+                    <attribute name="decoration-danger">verifactu_state in ['not_sent', 'sent_w_errors'] and verifactu_enabled and verifactu_hash_string</attribute>
                 </xpath>
                 <field name="state" position="after">
                     <field name="verifactu_state"/>
+                    <field name="verifactu_enabled"/>
+                    <field name="verifactu_hash_string" invisible="1"/>
                 </field>
             </field>
         </record>

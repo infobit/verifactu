@@ -2,7 +2,7 @@
 ############################################################################
 {
     'name' : 'Comunicación Veri*FACTU',
-    'version' : '8.0.1.0',
+    'version' : '8.0.1.1',
     'author' : 'OpenERP SA',
     'category' : 'Accounting & Finance',
     'description' : """
@@ -58,5 +58,6 @@ Para configurar este módulo es necesario:
     ],
     'installable': True,
     'auto_install': False,
+    "license": "AGPL-3", 
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

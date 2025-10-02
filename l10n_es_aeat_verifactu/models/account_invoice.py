@@ -177,6 +177,17 @@ class account_invoice(models.Model):
         copy=False,
     )
 
+    @api.multi
+    def action_cancel(self):
+        res = super(account_invoice, self).action_cancel()
+        if self.state not in ['draft', 'proforma', 'proforma2'] and self.verifactu_enabled:
+           raise osv.except_osv(
+                   _('Aviso'),
+                   _("La factura no se puede cancelar, ni modificar"))
+           return
+        else: 
+           return res
+
 
     @api.model
     def _selection_verifactu_reference_models(self):
@@ -285,6 +296,15 @@ class account_invoice(models.Model):
                 )
                 % self.name
             )
+        if not self.partner_id.vat and not self.partner_id.aeat_simplified_invoice:
+            raise UserError(
+                _(
+                    "The document %s cannot be sent to Verifactu because your "
+                    "partner does not vat assigned."
+                )
+                % self.name
+            )
+           
         return
 
 
@@ -820,30 +840,26 @@ class account_invoice(models.Model):
     def _get_verifactu_receiver_dict(self):
         self.ensure_one()
         receiver = self._aeat_get_partner()
-        (
-            country_code,
-            identifier_type,
-            identifier,
-        ) = receiver._parse_aeat_vat_info()
+        country_code, identifier_type, identifier = receiver._parse_aeat_vat_info()
         if identifier:
             identifier = "".join(e for e in identifier if e.isalnum()).upper()
         else:
             identifier = "NO_DISPONIBLE"
             identifier_type = "06"
         if identifier_type == "":
-            return {
-                "IDDestinatario": {
-                    "NombreRazon": receiver.name,
-                    "NIF": identifier,
-                }
-            }
+            return {"IDDestinatario": {"NombreRazon": receiver.name, "NIF": identifier}}
+        if (
+            receiver._map_aeat_country_code(country_code)
+            in receiver._get_aeat_europe_codes()
+        ):
+            identifier = country_code + identifier
         return {
             "IDDestinatario": {
                 "NombreRazon": receiver.name,
                 "IDOtro": {
                     "CodigoPais": receiver.country_id.code,
                     "IDType": identifier_type,
-                    "ID": country_code,
+                    "ID": identifier,
                 },
             }
         }
