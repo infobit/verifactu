@@ -41,8 +41,6 @@
                             <field name="verifactu_content_sent" />
                             <field name="verifactu_hash_string" />
                             <field name="verifactu_hash" />
-                            <field name="verifactu_previous_document_id" />
-                            <field name="verifactu_next_document_id" />
                             <field name="verifactu_macrodata"/>
                             <field name="verifactu_qr_url"/>
                             <field name="qr_image"/>

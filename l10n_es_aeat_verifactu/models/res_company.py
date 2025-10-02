@@ -23,11 +23,6 @@ class res_company(models.Model):
     #url_qrverifactu = fields.Char(string="Url QR Verifactu", default="https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR?")
     #url_qrnoverifactu_test = fields.Char(string="Url QR No Verifactu", default="https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQRNoVerifactu?")
     #url_qrnoverifactu = fields.Char(string="Url QR No Verifactu", default="https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQRNoVerifactu?")
-    verifactu_last_document_id = fields.Reference(
-        string="Last Verifactu Document",
-        selection="_selection_verifactu_reference_models",
-        #readonly=True,
-    )
     last_verifactu_invoice_entry_id = fields.Many2one(
         "verifactu.invoice.entry",
         string="VeriFactu Invoice Entry",

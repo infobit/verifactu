@@ -37,8 +37,7 @@
                         </group>
                     </group>
                     <group attrs="{'invisible': [('verifactu_enabled', '=', False)]}">
-                        <group name="verifactu_last_document_id">
-                            <!--<field name="verifactu_last_document_id" />-->
+                        <group name="verifactu_invoice_entry_id">
                             <field name="last_verifactu_invoice_entry_id"/>
                         </group>
                     </group>
