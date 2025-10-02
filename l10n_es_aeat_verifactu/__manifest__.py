@@ -2,7 +2,7 @@
 ############################################################################
 {
     'name' : 'Comunicación Veri*FACTU',
-    'version' : '11.0.1.1',
+    'version' : '11.0.1.2',
     'author' : 'OpenERP SA',
     'category' : 'Accounting & Finance',
     'description' : """
