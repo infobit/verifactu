@@ -11,13 +11,13 @@
                     </div>
                 </div>-->
                 <div id="l10n_es_verifactu_qr" class="row text-center">
-                    <strong>Verifactu QR</strong>
+                    <strong>QR Tributario</strong>
                     <div class="mb32 w-100">
                         <t t-if="o.qr_image">
                              <img t-att-src="'data:image/png;base64,%s' % o.qr_image" style="width:40mm;height:40mm;"/>
                         </t>
                     </div>
-                    <p><strong>Factura verificable en la sede electrónica de la AEAT</strong></p>
+                    <p><strong>VERI*FACTU</strong></p>
                 </div>
               </div>
               <br/>
