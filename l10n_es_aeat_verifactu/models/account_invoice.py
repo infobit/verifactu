@@ -176,6 +176,13 @@ class account_invoice(models.Model):
         else: 
            return res
 
+    @api.model
+    def _selection_verifactu_reference_models(self):
+        # this method is used to define the models that can be used as
+        # previous documents in the verifactu invoice entry
+        # it can be inherited to add others models if needed like pos.order
+        return [("account.invoice", "Invoice")]
+
 
     @api.multi
     def invoice_validate(self):
@@ -277,7 +284,7 @@ class account_invoice(models.Model):
                 % self.name
             )
         if not self.partner_id.vat and not self.partner_id.aeat_simplified_invoice:
-            raise UserError(
+            raise osv.except_osv(
                 _(
                     "The document %s cannot be sent to Verifactu because your "
                     "partner does not vat assigned."

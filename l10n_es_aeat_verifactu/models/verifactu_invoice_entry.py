@@ -252,10 +252,14 @@ class VerifactuInvoiceEntry(models.Model):
         doc_vals["verifactu_return"] = verifactu_response_line
         send_error = False
         if hasattr(verifactu_response_line, "CodigoErrorRegistro"):
-            send_error = "{} | {}".format(
+            """send_error = "{} | {}".format(
                 str(verifactu_response_line["CodigoErrorRegistro"]),
                 #verifactu_response_line["DescripcionErrorRegistro"].encode('utf-8'),
                 str(verifactu_response_line["DescripcionErrorRegistro"]),
+            )"""
+            send_error = u"{} | {}".format(
+               verifactu_response_line["CodigoErrorRegistro"],
+               verifactu_response_line["DescripcionErrorRegistro"]
             )
             # si ya ha devuelto previamente registro duplicado, parseamos el estado
             # del registro duplicado para dejar la factura correcta o incorrecta
@@ -280,9 +284,9 @@ class VerifactuInvoiceEntry(models.Model):
                         estado_registro = "AceptadoConErrores"
                         response_line.send_state = "accepted_with_errors"
                         response_line.entry_id.send_state = "accepted_with_errors"
-                    send_error = "{} | {}".format(
-                        str(registroDuplicado["CodigoErrorRegistro"]),
-                        str(registroDuplicado["DescripcionErrorRegistro"]), #.encode('utf-8'),
+                    send_error = u"{} | {}".format(
+                        registroDuplicado["CodigoErrorRegistro"],
+                        registroDuplicado["DescripcionErrorRegistro"] #.encode('utf-8'),
                     )
         if estado_registro == "Correcto":
             doc_vals.update(
