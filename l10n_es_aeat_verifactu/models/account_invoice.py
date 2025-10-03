@@ -136,18 +136,6 @@ class account_invoice(models.Model):
              "presentation at the VERIFACTU",
     )
 
-    verifactu_previous_document_id = fields.Reference(
-        string="Previous Verifactu Document",
-        selection="_selection_verifactu_reference_models",
-        readonly=True,
-        copy=False,
-    )
-    verifactu_next_document_id = fields.Reference(
-        string="Next Verifactu Document",
-        selection="_selection_verifactu_reference_models",
-        readonly=True,
-        copy=False,
-    )
     verifactu_send_date = fields.Datetime(index=True, copy=False)
     verifactu_registration_date = fields.Datetime(copy=False)
     verifactu_invoice_entry_ids = fields.One2many(
@@ -184,23 +172,6 @@ class account_invoice(models.Model):
         if self.filtered(lambda inv: inv.state not in ['draft', 'proforma'] and inv.verifactu_enabled):
             raise UserError(_("Esta factura no se puede cancelar, ni modificar"))
         return self.action_cancel()
-
-    """@api.multi
-    def action_cancel(self):
-        res = super(account_invoice, self).action_cancel()
-        if self.state not in ['draft', 'proforma'] and self.verifactu_enabled:
-           raise UserError(_("La factura no se puede cancelar, ni modificar"))
-           return
-        else:
-           return res"""
-
-
-    @api.model
-    def _selection_verifactu_reference_models(self):
-        # this method is used to define the models that can be used as
-        # previous documents in the verifactu mixin
-        # it can be inherited to add others models if needed like pos.order
-        return [("account.invoice", "Invoice")]
 
     @api.multi
     def invoice_validate(self):
@@ -480,9 +451,6 @@ class account_invoice(models.Model):
     def _get_verifactu_previous_hash(self):
         if self.last_verifactu_invoice_entry_id and self.last_verifactu_invoice_entry_id.previous_hash:
            return self.last_verifactu_invoice_entry_id.previous_hash
-        else:
-           if self.verifactu_previous_document_id:
-               return self.verifactu_previous_document_id.verifactu_hash
         return ""
 
     def _get_verifactu_registration_date(self):
@@ -633,27 +601,20 @@ class account_invoice(models.Model):
         """TODO
         si no es el primer registro, hay que enviar el registro anterior.
         Cuando sepamos cuál es el registro anterior"""
-        if self.last_verifactu_invoice_entry_id and self.last_verifactu_invoice_entry_id.previous_invoice_entry_id:
-           prev_invoice = self.last_verifactu_invoice_entry_id.previous_invoice_entry_id.document_id
-        else:
-         if self.verifactu_previous_document_id:
-           prev_invoice = self.verifactu_previous_document_id
-         else:
-           prev_invoice = self._get_previous_invoice()
-        if prev_invoice:
-           #raise Warning(prev_invoice)
-           valores = {
-               "RegistroAnterior": {
-                    "IDEmisorFactura": prev_invoice._get_verifactu_issuer(),
-                    "NumSerieFactura": prev_invoice._get_document_serial_number(),
-                    "FechaExpedicionFactura": prev_invoice._change_date_format(
-                        prev_invoice._get_document_date()),
-                    "Huella": prev_invoice.verifactu_hash, 
-               }
-           }
-           return valores
-        else:
-           return {"PrimerRegistro": "S"}
+        if self.last_verifactu_invoice_entry_id:
+           prev_entry = self.last_verifactu_invoice_entry_id.previous_invoice_entry_id
+           if prev_entry and prev_entry.document_id:
+              valores = {
+                "RegistroAnterior": {
+                    "IDEmisorFactura": prev_entry.document_id._get_verifactu_issuer(),
+                    "NumSerieFactura": prev_entry.document_id._get_document_serial_number(),
+                    "FechaExpedicionFactura": prev_entry.document_id._change_date_format(
+                        prev_entry.document_id._get_document_date()),
+                    "Huella": prev_entry.document_id.verifactu_hash, 
+                }
+              }
+              return valores
+        return {"PrimerRegistro": "S"}
 
     def _get_verifactu_taxes_and_total(self):
         self.ensure_one()

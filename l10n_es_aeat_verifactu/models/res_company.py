@@ -19,11 +19,6 @@ class res_company(models.Model):
     verifactu_enabled = fields.Boolean(string="Enable veri*FACTU")
     verifactu_test = fields.Boolean(string="Is it the veri*FACTU test environment?")
     verifactu_description = fields.Text(default="/", size=500, help="The description for Verifactu invoices if not set",)
-    verifactu_last_document_id = fields.Reference(
-        string="Last Verifactu Document",
-        selection="_selection_verifactu_reference_models",
-        #readonly=True,
-    )
     last_verifactu_invoice_entry_id = fields.Many2one(
         "verifactu.invoice.entry",
         string="VeriFactu Invoice Entry",

@@ -33,24 +33,10 @@
                              <field name="verifactu_send_error"/>
                             <!--attrs="{'invisible': [('verifactu_send_failed', '=', False)]}"-->
                           </group>
-                     </page>
-                     <page name="page_aeat_result_technical" string="Technical" groups="base.group_no_one">
-                          <group>
-                            <field name="verifactu_return"/>
-                            <field name="verifactu_header_sent" />
-                            <field name="verifactu_content_sent" />
-                            <field name="verifactu_hash_string" />
-                            <field name="verifactu_hash" />
-                            <field name="verifactu_previous_document_id" />
-                            <field name="verifactu_next_document_id" />
-                            <field name="verifactu_macrodata"/>
-                            <field name="verifactu_qr_url"/>
-                            <field name="qr_image"/>
-                          </group>
                           <group>
                             <field name="verifactu_invoice_entry_ids" />
                           </group>
-                          <group>
+                          <!--<group>
                             <label for="verifactu_response_line_ids" />
                           </group>
                           <field name="verifactu_response_line_ids" nolabel="1">
@@ -61,7 +47,19 @@
                                             name="send_state"
                                         />
                                     </tree>
-                          </field>
+                          </field>-->
+                     </page>
+                     <page name="page_aeat_result_technical" string="Technical" groups="base.group_no_one">
+                          <group>
+                            <field name="verifactu_return"/>
+                            <field name="verifactu_header_sent" />
+                            <field name="verifactu_content_sent" />
+                            <field name="verifactu_hash_string" />
+                            <field name="verifactu_hash" />
+                            <field name="verifactu_macrodata"/>
+                            <field name="verifactu_qr_url"/>
+                            <field name="qr_image"/>
+                          </group>
                      </page>
                      <page string="Veri*FACTU Information" name="page_aeat"> <!--attrs="{'invisible': [('verifactu_enabled', '=', False)]}">-->
                       <group string="Veri*FACTU Information" name="group_aeat_information">
