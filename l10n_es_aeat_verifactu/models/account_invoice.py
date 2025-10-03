@@ -173,6 +173,14 @@ class account_invoice(models.Model):
             raise UserError(_("Esta factura no se puede cancelar, ni modificar"))
         return self.action_cancel()
 
+    @api.model
+    def _selection_verifactu_reference_models(self):
+        # this method is used to define the models that can be used as
+        # previous documents in the verifactu invoice entry
+        # it can be inherited to add others models if needed like pos.order
+        return [("account.invoice", "Invoice")]  
+
+
     @api.multi
     def invoice_validate(self):
         res = super(account_invoice, self).invoice_validate() #action_number()
