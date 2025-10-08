@@ -1,0 +1,1758 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* l10n_es_aeat_verifactu
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-08 14:44+0000\n"
+"PO-Revision-Date: 2025-10-08 14:44+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity.type,days:0
+msgid "# Days"
+msgstr "# Dias"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:757
+#, python-format
+msgid "%s tax is not mapped to Verifactu."
+msgstr "%s impuesto no mapeado en Verifactu."
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.actions.act_window,help:l10n_es_aeat_verifactu.action_verifactu_invoice_entry
+msgid "<p class=\"o_view_nocontent_smiling_face\">\n"
+"                No VeriFactu invoice entries found!\n"
+"            </p>\n"
+"            <p>\n"
+"                Invoice entries are automatically created when invoices are validated\n"
+"                with VeriFactu enabled.\n"
+"            </p>\n"
+"        "
+msgstr "<p class=\"o_view_nocontent_smiling_face\">\n"
+"                No se han encontrado facturas verifactu!\n"
+"            </p>\n"
+"            <p>\n"
+"                El registro de envío se genera automaticamente cuando se confirma la factura\n"
+"                si VeriFactu esta activo.\n"
+"            </p>\n"
+"        "
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.actions.act_window,help:l10n_es_aeat_verifactu.action_verifactu_invoice_entry_response
+msgid "<p class=\"o_view_nocontent_smiling_face\">\n"
+"                No VeriFactu invoice entries responses found!\n"
+"            </p>\n"
+"        "
+msgstr "<p class=\"o_view_nocontent_smiling_face\">\n"
+"                No hay registros de respuesta de VeriFactu!\n"
+"            </p>\n"
+"        "
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,tax_agency_id:0
+msgid "AEAT Agency"
+msgstr "AEAT Agencia"
+
+#. module: l10n_es_aeat_verifactu
+#: view:verifactu.invoice.entry:l10n_es_aeat_verifactu.view_verifactu_invoice_entry_form
+msgid "AEAT DATA"
+msgstr "AEAT DATOS"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.partner,aeat_identification_type:0
+msgid "AEAT Identification type"
+msgstr "AEAT tipo de identificación"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,aeat_json_data:0
+msgid "AEAT JSON Data"
+msgstr "AEAT JSON Data"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.partner,aeat_simplified_invoice:0
+msgid "AEAT Simplified Invoice"
+msgstr "AEAT Factura simplificada"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.actions.act_window,name:l10n_es_aeat_verifactu.action_aeat_verifactu_registration_keys
+msgid "AEAT Verifactu Registration Keys"
+msgstr "AEAT Verifactu Claves de registro"
+
+#. module: l10n_es_aeat_verifactu
+#: view:res.company:l10n_es_aeat_verifactu.view_company_verifactu_form
+msgid "AEAT veri*FACTU Configuration"
+msgstr "AEAT veri*FACTU Configuración"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_state:0
+msgid "Accepted with errors"
+msgstr "Acceptada con errores"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:certificate.verifactu,state:0
+msgid "Active"
+msgstr "Activo"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity.mixin,activity_ids:0
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_mail_activity
+#: field:mail.activity,activity_type_id:0
+msgid "Activity"
+msgstr "Actividad"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_mail_activity_mixin
+msgid "Activity Mixin"
+msgstr "Actividad Mixin"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_mail_activity_type
+#: view:verifactu.invoice.entry.response:l10n_es_aeat_verifactu.verifactu_invoice_entry_response_view_search
+#: field:verifactu.invoice.entry.response,activity_type_id:0
+msgid "Activity Type"
+msgstr "Tipo de actividad"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.ui.menu,name:l10n_es_aeat_verifactu.menu_verifactu_invoice_entry
+msgid "Aeat Verifactu Invoice"
+msgstr "Aeat Verifactu Factura "
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.ui.menu,name:l10n_es_aeat_verifactu.menu_verifactu_invoice_entry_response
+msgid "Aeat Verifactu Invoice Entry Response"
+msgstr "Aeat Verifactu Registro respuestas factura"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.verifactu.map.lines,verifactu_map_id:0
+#: model:ir.actions.act_window,name:l10n_es_aeat_verifactu.action_aeat_verifactu_mapping
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_aeat_verifactu_map
+#: model:ir.ui.menu,name:l10n_es_aeat_verifactu.menu_aeat_verifactu_map
+msgid "Aeat Verifactu Map"
+msgstr "Aeat Verifactu Mapeo"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_aeat_verifactu_map_lines
+msgid "Aeat Verifactu Map Lines"
+msgstr "Aeat Verifactu Mapeo Lineas"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_aeat_verifactu_registration_keys
+msgid "Aeat Verifactu Registration Keys"
+msgstr "Aeat Verifactu Claves de Registro"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.partner,aeat_identification:0
+msgid "Aeat identification"
+msgstr "Aeat identificación"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Already sent but with local changes not sent yet"
+msgstr "Se ha enviado pero con cambios pendientes de enviar"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Already sent to Verifactu. It includes cancelled invoices"
+msgstr "Se ha enviado a Verifactu. It includes cancelled invoices"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:res.partner,aeat_identification_type:0
+msgid "Another document"
+msgstr "Otro documento"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,no_auto_thread:0
+msgid "Answers do not go in the original document' discussion thread. This has an impact on the generated message-id."
+msgstr "Las respuestas no se incluyen en el hilo de discusión del documento original. Esto afecta el ID del mensaje generado."
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,user_id:0
+msgid "Assigned to"
+msgstr "Assignado a"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:res.company,verifactu_send_mode:0
+msgid "At fixed time"
+msgstr "A un tiempo fijo"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,attachment_ids:0
+msgid "Attachments"
+msgstr "Adjuntos"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,author_id:0
+msgid "Author"
+msgstr "Autor"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,author_id:0
+msgid "Author of the message. If not set, email_from may hold an email address that did not match any partner."
+msgstr "Autor del mensaje. Si no se configura, email_from podría contener una dirección de correo electrónico que no coincidió con ningún empresa."
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,author_avatar:0
+msgid "Author's Avatar"
+msgstr "Autor Avatar"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:res.company,verifactu_method:0
+msgid "Automatic"
+msgstr "Automatico"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,body:0
+msgid "Automatically sanitized HTML contents"
+msgstr "Automatically sanitized HTML contents"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:173
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:193
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:216
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:224
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:233
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:242
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:251
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:260
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:270
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:279
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:383
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:976
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:1014
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:1260
+#, python-format
+msgid "Aviso"
+msgstr "Aviso"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.tax.agency:l10n_es_aeat_verifactu.aeat_tax_agency_form_view
+msgid "Base URL"
+msgstr "Base URL"
+
+#. module: l10n_es_aeat_verifactu
+#: help:res.company,verifactu_method:0
+msgid "By default, the invoice is sent/queued in validation process. With manual method, there's a button to send the invoice."
+msgstr "De forma predeterminada, la factura se envía/se pone en cola en el proceso de validación. Con el método manual, hay un botón para enviar la factura."
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_refund_type:0
+msgid "By differences"
+msgstr "Por diferencias"
+
+#. module: l10n_es_aeat_verifactu
+#: view:l10n.es.aeat.verifactu.password:l10n_es_aeat_verifactu.l10n_es_verifactu_password_wizard_view
+#: selection:verifactu.invoice.entry,entry_type:0
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_state:0
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_state:0
+msgid "Cancelled in SII but last modifications not sent"
+msgstr "Cancelado en SII pero las últimas modificaciones no han sido enviadas"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Cancelled invoices at Verifactu"
+msgstr "Facturas canceladas en Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: help:mail.activity.type,category:0
+msgid "Categories may trigger specific behavior like opening calendar view"
+msgstr "Categories may trigger specific behavior like opening calendar view"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity.type,category:0
+msgid "Category"
+msgstr "Category"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.actions.act_window,name:l10n_es_aeat_verifactu.certificate_verifactu_action
+msgid "Certificate VERIFACTU"
+msgstr "Certificado VERIFACTU"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry_response.py:70
+#, python-format
+msgid "Check connection error with Verifactu"
+msgstr "Comprobar error de conexión con Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry_response.py:98
+#, python-format
+msgid "Check incorrect invoices from Verifactu"
+msgstr "Comprobar facturas incorrectas desde Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: help:res.company,verifactu_use_connector:0
+msgid "Check it to use connector instead of sending the invoice directly when it's validated"
+msgstr "Márquelo para usar el conector en lugar de enviar la factura directamente cuando se valide"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,child_ids:0
+msgid "Child Messages"
+msgstr "Child Messages"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.verifactu.map.lines,code:0
+#: field:aeat.verifactu.registration.keys,code:0
+msgid "Code"
+msgstr "Codigo"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:verifactu.invoice.entry.response,type:0
+msgid "Comment"
+msgstr "Comentario"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: l10n_es_aeat_verifactu
+#: field:certificate.verifactu,company_id:0
+#: view:verifactu.invoice.entry:l10n_es_aeat_verifactu.view_verifactu_invoice_entry_search
+msgid "Company"
+msgstr "Compañia"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,company_id:0
+msgid "Company id"
+msgstr "Compañia id"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry.py:364
+#: model:mail.activity.type,summary:l10n_es_aeat_verifactu.mail_activity_data_exception
+#, python-format
+msgid "Connection error with Verifactu"
+msgstr "Error de conexión con Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: view:res.company:l10n_es_aeat_verifactu.view_company_verifactu_form
+msgid "Connector config"
+msgstr "Connector configuración"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,body:0
+msgid "Contents"
+msgstr "Contenidos"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:384
+#, python-format
+msgid "Could not obtain last document sent to verifactu."
+msgstr "No se pudo obtener el último documento enviado a verifactu.."
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,create_uid:0
+#: field:aeat.verifactu.map,create_uid:0
+#: field:aeat.verifactu.map.lines,create_uid:0
+#: field:aeat.verifactu.registration.keys,create_uid:0
+#: field:certificate.verifactu,create_uid:0
+#: field:l10n.es.aeat.verifactu.password,create_uid:0
+#: field:mail.activity,create_uid:0
+#: field:mail.activity.type,create_uid:0
+#: field:verifactu.developer,create_uid:0
+#: field:verifactu.invoice.entry,create_uid:0
+#: field:verifactu.invoice.entry.response,create_uid:0
+#: field:verifactu.invoice.entry.response.line,create_uid:0
+msgid "Created by"
+msgstr "Created by"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,create_date:0
+#: field:aeat.verifactu.map,create_date:0
+#: field:aeat.verifactu.map.lines,create_date:0
+#: field:aeat.verifactu.registration.keys,create_date:0
+#: field:certificate.verifactu,create_date:0
+#: field:l10n.es.aeat.verifactu.password,create_date:0
+#: field:mail.activity,create_date:0
+#: field:mail.activity.type,create_date:0
+#: field:verifactu.developer,create_date:0
+#: field:verifactu.invoice.entry,create_date:0
+#: field:verifactu.invoice.entry.response,create_date:0
+#: field:verifactu.invoice.entry.response.line,create_date:0
+msgid "Created on"
+msgstr "Created on"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,starred:0
+msgid "Current user has a starred notification linked to this message"
+msgstr "Current user has a starred notification linked to this message"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,to_read:0
+msgid "Current user has an unread notification linked to this message"
+msgstr "Current user has an unread notification linked to this message"
+
+#. module: l10n_es_aeat_verifactu
+#: view:verifactu.invoice.entry:l10n_es_aeat_verifactu.view_verifactu_invoice_entry_search
+#: view:verifactu.invoice.entry.response:l10n_es_aeat_verifactu.verifactu_invoice_entry_response_view_form
+#: field:verifactu.invoice.entry.response,date:0
+msgid "Date"
+msgstr "Date"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.verifactu.map,date_from:0
+msgid "Date from"
+msgstr "Fecha desde"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,message_last_post:0
+msgid "Date of the last message posted on the record."
+msgstr "Date of the last message posted on the record."
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.verifactu.map,date_to:0
+msgid "Date to"
+msgstr "Fecha hasta"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,datetime:0
+msgid "Datetime"
+msgstr "Datetime"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,verifactu_delay_time:0
+msgid "Delay time"
+msgstr "Delay time"
+
+#. module: l10n_es_aeat_verifactu
+#: view:verifactu.invoice.entry.response:l10n_es_aeat_verifactu.verifactu_invoice_entry_response_view_form
+msgid "Details"
+msgstr "Detalles"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.developer,name:0
+msgid "Developer Name"
+msgstr "Nombre desarrollador"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.developer,vat:0
+msgid "Developer VAT"
+msgstr "CIF Desarrollador"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.actions.act_window,name:l10n_es_aeat_verifactu.verifactu_developer_action
+msgid "Developer VERIFACTU"
+msgstr "Desarrollador VERIFACTU"
+
+#. module: l10n_es_aeat_verifactu
+#: help:mail.activity,res_name:0
+msgid "Display name of the related document."
+msgstr "Display name of the related document."
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,document_id:0
+#: field:verifactu.invoice.entry.response.line,document_id:0
+msgid "Document"
+msgstr "Documento"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,res_name:0
+msgid "Document Name"
+msgstr "Nombre documento"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,document_hash:0
+msgid "Document hash"
+msgstr "hash documento"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,document_name:0
+msgid "Document name"
+msgstr "Nombre documento"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:certificate.verifactu,state:0
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,date_deadline:0
+msgid "Due Date"
+msgstr "Due Date"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:verifactu.invoice.entry.response,type:0
+msgid "Email"
+msgstr "Email"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,email_from:0
+msgid "Email address of the sender. This field is set when no matching partner is found for incoming emails."
+msgstr "Email address of the sender. This field is set when no matching partner is found for incoming emails."
+
+#. module: l10n_es_aeat_verifactu
+#: help:account.fiscal.position,verifactu_active:0
+msgid "Enable Verifactu for this fiscal position?"
+msgstr "Enable Verifactu for this fiscal position?"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.journal,verifactu_enabled:0
+#: field:res.company,verifactu_enabled:0
+msgid "Enable veri*FACTU"
+msgstr "Disponible veri*FACTU"
+
+#. module: l10n_es_aeat_verifactu
+#: field:certificate.verifactu,date_end:0
+msgid "End Date"
+msgstr "Fecha fin"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response.line,entry_id:0
+msgid "Entry id"
+msgstr "Registro envio factura"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response.line,entry_response_id:0
+msgid "Entry response id"
+msgstr "Entry response id"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,entry_type:0
+msgid "Entry type"
+msgstr "Tipo entrada"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response.line,error_code:0
+msgid "Error code"
+msgstr "Error code"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry.py:335
+#, python-format
+msgid "Error when trying to connect to Veri*FACTU: {}"
+msgstr "Error al intentar conectar a Veri*FACTU: {}"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/aeat_verifactu_map.py:53
+#, python-format
+msgid "Error! The dates of the record overlap with an existing record."
+msgstr "Error! The dates of the record overlap with an existing record."
+
+#. module: l10n_es_aeat_verifactu
+#: model:mail.activity.type,name:l10n_es_aeat_verifactu.mail_activity_data_exception
+msgid "Exception"
+msgstr "Exception"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_refund_specific_invoice_type:0
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:118
+#, python-format
+msgid "FACTURA RECTIFICATIVA (Art 80.1 y 80.2 y error fundado en derecho)"
+msgstr "FACTURA RECTIFICATIVA (Art 80.1 y 80.2 y error fundado en derecho)"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_refund_specific_invoice_type:0
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:120
+#, python-format
+msgid "FACTURA RECTIFICATIVA (Art. 80.3)"
+msgstr "FACTURA RECTIFICATIVA (Art. 80.3)"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_refund_specific_invoice_type:0
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:121
+#, python-format
+msgid "FACTURA RECTIFICATIVA (Art. 80.4)"
+msgstr "FACTURA RECTIFICATIVA (Art. 80.4)"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_refund_specific_invoice_type:0
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:122
+#, python-format
+msgid "FACTURA RECTIFICATIVA (Resto)"
+msgstr "FACTURA RECTIFICATIVA (Resto)"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_refund_specific_invoice_type:0
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:123
+#, python-format
+msgid "FACTURA RECTIFICATIVA EN FACTURAS SIMPLIFICADAS"
+msgstr "FACTURA RECTIFICATIVA EN FACTURAS SIMPLIFICADAS"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,feedback:0
+msgid "Feedback"
+msgstr "Feedback"
+
+#. module: l10n_es_aeat_verifactu
+#: field:certificate.verifactu,file:0
+msgid "File"
+msgstr "Fichero"
+
+#. module: l10n_es_aeat_verifactu
+#: help:account.invoice,verifactu_refund_specific_invoice_type:0
+msgid "Fill this field when the refund are one of the specific cases of article 80 of LIVA for notifying to Vertifactu with the proper invoice type."
+msgstr "Rellene este campo cuando la devolución sea uno de los supuestos específicos del artículo 80 de la LIVA para notificar a Vertifactu con el tipo de factura adecuado."
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_account_fiscal_position
+msgid "Fiscal Position"
+msgstr "Posición fiscal"
+
+#. module: l10n_es_aeat_verifactu
+#: field:certificate.verifactu,folder:0
+#: field:l10n.es.aeat.verifactu.password,folder:0
+msgid "Folder Name"
+msgstr "Nombre de carpeta"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,message_follower_ids:0
+msgid "Followers"
+msgstr "Followers"
+
+#. module: l10n_es_aeat_verifactu
+#: help:mail.activity.type,icon:0
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Font awesome icon e.g. fa-tasks"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,email_from:0
+msgid "From"
+msgstr "From"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry,aeat_json_data:0
+msgid "Generated JSON data to send to AEAT"
+msgstr "Generación JSON data para envio a AEAT"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.verifactu.registration.keys:l10n_es_aeat_verifactu.aeat_verifactu_registration_keys_view_search
+#: view:verifactu.invoice.entry.response:l10n_es_aeat_verifactu.verifactu_invoice_entry_response_view_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,header:0
+msgid "Header"
+msgstr "Header"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,id:0
+#: field:aeat.verifactu.map,id:0
+#: field:aeat.verifactu.map.lines,id:0
+#: field:aeat.verifactu.registration.keys,id:0
+#: field:certificate.verifactu,id:0
+#: field:l10n.es.aeat.verifactu.password,id:0
+#: field:mail.activity,id:0
+#: field:mail.activity.mixin,id:0
+#: field:mail.activity.type,id:0
+#: field:verifactu.developer,id:0
+#: field:verifactu.invoice.entry,id:0
+#: field:verifactu.invoice.entry.response,id:0
+#: field:verifactu.invoice.entry.response.line,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity.type,icon:0
+msgid "Icon"
+msgstr "Icon"
+
+#. module: l10n_es_aeat_verifactu
+#: help:res.partner,aeat_identification:0
+msgid "Identification for AEAT purposes"
+msgstr "Identification for AEAT purposes"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr "If checked new messages require your attention."
+
+#. module: l10n_es_aeat_verifactu
+#: help:res.company,verifactu_start_date:0
+msgid "If this field is set, the verifactu won't be enabled on invoices with lower invoice date. If not set, the verifactu can be enabled on all invoice dates"
+msgstr "Si se configura este campo, la activación de verifactu no se habilitará en facturas con fecha inferior. Si no se configura, se habilita en todas las fechas de factura."
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,qr_image:0
+msgid "Image QRL Invoice"
+msgstr "Imagen QR Factura"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry.py:366
+#, python-format
+msgid "Incorrect invoices sent to Verifactu"
+msgstr "Envio incorrecto de las facturas a Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry,send_state:0
+#: help:verifactu.invoice.entry.response.line,send_state:0
+msgid "Indicates the state of this document in relation with the presentation to Verifactu."
+msgstr "Indica el estado de este documento en relación con la presentación a Verifactu."
+
+#. module: l10n_es_aeat_verifactu
+#: help:account.invoice,verifactu_state:0
+msgid "Indicates the state of this invoice in relation with the presentation at the SII"
+msgstr "Indica el estado de esta factua en relación con la presentación a Verifactu."
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,parent_id:0
+msgid "Initial thread message."
+msgstr "Initial thread message."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/certificate_verifactu.py:34
+#: view:l10n.es.aeat.verifactu.password:l10n_es_aeat_verifactu.l10n_es_verifactu_password_wizard_view
+#, python-format
+msgid "Insert Password"
+msgstr "Inserta el Password"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.developer,installation_number:0
+msgid "Installation number"
+msgstr "Numero de instalación"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_account_invoice
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,invoice_data:0
+msgid "Invoice data"
+msgstr "Invoice data"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,message_is_follower:0
+msgid "Is a Follower"
+msgstr "Is a Follower"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,verifactu_test:0
+msgid "Is it the veri*FACTU test environment?"
+msgstr "Esta veri*FACTU en pruebas?"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_account_journal
+msgid "Journal"
+msgstr "Diario"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:280
+#, python-format
+msgid "La factura  %s no puede ser validada porque tiene fecha factura superior a la actual."
+msgstr "La factura  %s no puede ser validada porque tiene fecha factura superior a la actual."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:174
+#, python-format
+msgid "La factura no se puede cancelar, ni modificar"
+msgstr "La factura no se puede cancelar, ni modificar"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,message_last_post:0
+msgid "Last Message Date"
+msgstr "Fecha ultimo mensaje"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,last_response_line_id:0
+msgid "Last Response Line"
+msgstr "Ultima linea de respuesta"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,write_uid:0
+#: field:aeat.verifactu.map,write_uid:0
+#: field:aeat.verifactu.map.lines,write_uid:0
+#: field:aeat.verifactu.registration.keys,write_uid:0
+#: field:certificate.verifactu,write_uid:0
+#: field:l10n.es.aeat.verifactu.password,write_uid:0
+#: field:mail.activity,write_uid:0
+#: field:mail.activity.type,write_uid:0
+#: field:verifactu.developer,write_uid:0
+#: field:verifactu.invoice.entry,write_uid:0
+#: field:verifactu.invoice.entry.response,write_uid:0
+#: field:verifactu.invoice.entry.response.line,write_uid:0
+msgid "Last Updated by"
+msgstr "Last Updated by"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,write_date:0
+#: field:aeat.verifactu.map,write_date:0
+#: field:aeat.verifactu.map.lines,write_date:0
+#: field:aeat.verifactu.registration.keys,write_date:0
+#: field:certificate.verifactu,write_date:0
+#: field:l10n.es.aeat.verifactu.password,write_date:0
+#: field:mail.activity,write_date:0
+#: field:mail.activity.type,write_date:0
+#: field:verifactu.developer,write_date:0
+#: field:verifactu.invoice.entry,write_date:0
+#: field:verifactu.invoice.entry.response,write_date:0
+#: field:verifactu.invoice.entry.response.line,write_date:0
+msgid "Last Updated on"
+msgstr "Last Updated on"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,last_error_code:0
+msgid "Last error code"
+msgstr "Ultimo codigo de error"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.verifactu.map,map_lines:0
+msgid "Lines"
+msgstr "Lineas"
+
+#. module: l10n_es_aeat_verifactu
+#: view:certificate.verifactu:l10n_es_aeat_verifactu.certificate_verifactu_form_view
+msgid "Load Certificate"
+msgstr "Cargar Certificado"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:res.company,verifactu_method:0
+msgid "Manual"
+msgstr "Manual"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.verifactu.map:l10n_es_aeat_verifactu.aeat_verifactu_map_view_form
+msgid "Mapping Lines"
+msgstr "Mapping Lineas"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,record_name:0
+msgid "Message Record Name"
+msgstr "Message Record Name"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,type:0
+msgid "Message type: email for email message, notification for system message, comment for other messages such as user replies"
+msgstr "Message type: email for email message, notification for system message, comment for other messages such as user replies"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,message_id:0
+msgid "Message unique identifier"
+msgstr "Message unique identifier"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,message_id:0
+msgid "Message-Id"
+msgstr "Message-Id"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,message_ids:0
+msgid "Messages"
+msgstr "Messages"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,message_ids:0
+msgid "Messages and communication history"
+msgstr "Messages and communication history"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,verifactu_method:0
+msgid "Method"
+msgstr "Method"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.verifactu.map,name:0
+#: field:mail.activity.type,res_model_id:0
+#: field:verifactu.invoice.entry,model:0
+#: field:verifactu.invoice.entry.response.line,model:0
+msgid "Model"
+msgstr "Model"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:verifactu.invoice.entry,entry_type:0
+msgid "Modify"
+msgstr "Modify"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.verifactu.map.lines,name:0
+#: field:aeat.verifactu.registration.keys,name:0
+#: field:certificate.verifactu,name:0
+#: field:mail.activity.type,name:0
+#: view:verifactu.invoice.entry.response:l10n_es_aeat_verifactu.verifactu_invoice_entry_response_view_form
+#: field:verifactu.invoice.entry.response,name:0
+msgid "Name"
+msgstr "Name"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,record_name:0
+msgid "Name get of the related document."
+msgstr "Name get of the related document."
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Never sent to Verifactu"
+msgstr "Nunca enviado a Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity.mixin,activity_date_deadline:0
+msgid "Next Activity Deadline"
+msgstr "Next Activity Deadline"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:925
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry.py:182
+#, python-format
+msgid "No VAT configured for the company '{}'"
+msgstr "No VAT configured for the company '{}'"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,no_auto_thread:0
+msgid "No threading for answers"
+msgstr "No threading for answers"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,name:0
+msgid "Nombre"
+msgstr "Nombre"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_state:0
+#: selection:verifactu.invoice.entry,send_state:0
+#: selection:verifactu.invoice.entry.response.line,send_state:0
+msgid "Not sent"
+msgstr "No enviado"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,note:0
+msgid "Note"
+msgstr "Nota"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,notification_ids:0
+msgid "Notifications"
+msgstr "Notificaciones"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,notified_partner_ids:0
+msgid "Notified partners"
+msgstr "Notificación empresas"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry,send_attempt:0
+msgid "Number of attempts to send this document."
+msgstr "Número de intentos de envío de este documento"
+
+#. module: l10n_es_aeat_verifactu
+#: help:mail.activity.type,days:0
+msgid "Number of days before executing the action. It allows to plan the action deadline."
+msgstr "Number of days before executing the action. It allows to plan the action deadline."
+
+#. module: l10n_es_aeat_verifactu
+#: view:certificate.verifactu:l10n_es_aeat_verifactu.certificate_verifactu_form_view
+#: view:l10n.es.aeat.verifactu.password:l10n_es_aeat_verifactu.l10n_es_verifactu_password_wizard_view
+msgid "Obtain Keys"
+msgstr "Obtener Claves"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:res.company,verifactu_send_mode:0
+msgid "On validate"
+msgstr "Al validar"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/wizard/aeat_verifactu_password.py:67
+#, python-format
+msgid "OpenSSL version is not supported. Upgrade to 0.13 or greater."
+msgstr "OpenSSL version is not supported. Upgrade to 0.13 or greater."
+
+#. module: l10n_es_aeat_verifactu
+#: selection:mail.activity.type,category:0
+msgid "Other"
+msgstr "Otro"
+
+#. module: l10n_es_aeat_verifactu
+#: view:verifactu.invoice.entry.response:l10n_es_aeat_verifactu.verifactu_invoice_entry_response_view_form
+msgid "Other details"
+msgstr "Otros detalles"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,mail_server_id:0
+msgid "Outgoing mail server"
+msgstr "Outgoing mail server"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,parent_id:0
+msgid "Parent Message"
+msgstr "Parent Message"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_res_partner
+msgid "Partner"
+msgstr "Empresa"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,notified_partner_ids:0
+msgid "Partners that have a notification pushing this message in their mailboxes"
+msgstr "Partners that have a notification pushing this message in their mailboxes"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:res.partner,aeat_identification_type:0
+msgid "Passport"
+msgstr "Passport"
+
+#. module: l10n_es_aeat_verifactu
+#: field:l10n.es.aeat.verifactu.password,password:0
+msgid "Password"
+msgstr "Password"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:977
+#, python-format
+msgid "Please, configure the verifactu developer in your company"
+msgstr "Por favor, configure los datos del desarrollador de verifactu en su empresa"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:194
+#, python-format
+msgid "Por favor, indique el tipo de factura rectificativa. (Verifactu refund type)"
+msgstr "Por favor, indique el tipo de factura rectificativa. (Verifactu refund type)"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity.type,previous_type_ids:0
+msgid "Preceding Activities"
+msgstr "Preceding Activities"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,previous_activity_type_id:0
+msgid "Previous Activity Type"
+msgstr "Previous Activity Type"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,previous_invoice_entry_id:0
+msgid "Previous Invoice Entry"
+msgstr "Anterior registro envio"
+
+#. module: l10n_es_aeat_verifactu
+#: field:certificate.verifactu,private_key:0
+msgid "Private Key"
+msgstr "Private Key"
+
+#. module: l10n_es_aeat_verifactu
+#: field:certificate.verifactu,public_key:0
+msgid "Public Key"
+msgstr "Public Key"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,verifactu_qr_base_url:0
+msgid "QR Base URL"
+msgstr "QR Base URL"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,verifactu_qr_base_url_test_address:0
+msgid "QR Base URL Test"
+msgstr "QR Base URL Test"
+
+#. module: l10n_es_aeat_verifactu
+#: view:website:account.report_invoice_document
+msgid "QR Tributario"
+msgstr "QR Tributario"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,partner_ids:0
+msgid "Recipients"
+msgstr "Recipients"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,recommended_activity_type_id:0
+msgid "Recommended Activity Type"
+msgstr "Recommended Activity Type"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity.type,next_type_ids:0
+msgid "Recommended Next Activities"
+msgstr "Recommended Next Activities"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/mail_activity.py:182
+#, python-format
+msgid "Records:"
+msgstr "Records:"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:verifactu.invoice.entry,entry_type:0
+msgid "Register"
+msgstr "Register"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_state:0
+msgid "Registered in SII but last modifications not sent"
+msgstr "Registered in SII but last modifications not sent"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,res_id:0
+#: field:verifactu.invoice.entry.response,res_id:0
+msgid "Related Document ID"
+msgstr "Related Document ID"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,res_model:0
+#: field:mail.activity,res_model_id:0
+#: field:verifactu.invoice.entry.response,model:0
+msgid "Related Document Model"
+msgstr "Related Document Model"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,reply_to:0
+msgid "Reply email address. Setting the reply_to bypasses the automatic thread creation."
+msgstr "Reply email address. Setting the reply_to bypasses the automatic thread creation."
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,reply_to:0
+msgid "Reply-To"
+msgstr "Reply-To"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_from_ref
+msgid "Resend to Verifactu"
+msgstr "Resend to Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:res.partner,aeat_identification_type:0
+msgid "Residential certificate"
+msgstr "Residential certificate"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,response:0
+#: field:verifactu.invoice.entry.response.line,response:0
+msgid "Response"
+msgstr "Response"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,response_line_ids:0
+msgid "Response Lines"
+msgstr "Response Lines"
+
+#. module: l10n_es_aeat_verifactu
+#: view:verifactu.invoice.entry:l10n_es_aeat_verifactu.view_verifactu_invoice_entry_form
+#: field:verifactu.invoice.entry,response_line_ids:0
+msgid "Responses"
+msgstr "Responses"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry,response_line_ids:0
+msgid "Responses from Verifactu after sending the documents."
+msgstr "Responses from Verifactu after sending the documents."
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.developer,responsibility_declaration:0
+msgid "Responsibility declaration"
+msgstr "Responsibility declaration"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.journal,restrict_mode_hash_table:0
+msgid "Restrict mode hash table"
+msgstr "Restrict mode hash table"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.journal,restrict_mode_hash_table_readonly:0
+msgid "Restrict mode hash table readonly"
+msgstr "Restrict mode hash table readonly"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.developer,sif_id:0
+msgid "SIF ID"
+msgstr "SIF ID"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.developer,sif_name:0
+msgid "SIF Name"
+msgstr "SIF Name"
+
+#. module: l10n_es_aeat_verifactu
+#: view:verifactu.invoice.entry:l10n_es_aeat_verifactu.view_verifactu_invoice_entry_search
+msgid "Search VeriFactu Invoice"
+msgstr "Search VeriFactu Invoice"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,send_attempt:0
+msgid "Send attempt"
+msgstr "Send attempt"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_from_ref
+msgid "Send cancellation to Verifactu"
+msgstr "Send cancellation to Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_send_error:0
+msgid "Send error"
+msgstr "Send error"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_send_failed:0
+msgid "Send failed"
+msgstr "Fall envio"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,verifactu_send_mode:0
+msgid "Send mode"
+msgstr "Modo envio"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:account.invoice,verifactu_state:0
+msgid "Sent"
+msgstr "Enviado"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:verifactu.invoice.entry,send_state:0
+#: selection:verifactu.invoice.entry.response.line,send_state:0
+msgid "Sent and Correct"
+msgstr "Enviado y correto"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:verifactu.invoice.entry,send_state:0
+#: selection:verifactu.invoice.entry.response.line,send_state:0
+msgid "Sent and Incorrect"
+msgstr "Enviado e incorrecto"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:verifactu.invoice.entry,send_state:0
+#: selection:verifactu.invoice.entry.response.line,send_state:0
+msgid "Sent and accepted with errors"
+msgstr "Enviada y aceptada con errores"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,verifactu_sent_time:0
+msgid "Sent time"
+msgstr "Tiempo envio"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity.type,sequence:0
+msgid "Sequence"
+msgstr "Sequence"
+
+#. module: l10n_es_aeat_verifactu
+#: help:mail.activity.type,res_model_id:0
+msgid "Specify a model if the activity should be specific to a model and not available when managing activities for other models."
+msgstr "Specify a model if the activity should be specific to a model and not available when managing activities for other models."
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,starred:0
+msgid "Starred"
+msgstr "Starred"
+
+#. module: l10n_es_aeat_verifactu
+#: field:certificate.verifactu,date_start:0
+msgid "Start Date"
+msgstr "Start Date"
+
+#. module: l10n_es_aeat_verifactu
+#: field:certificate.verifactu,state:0
+msgid "State"
+msgstr "State"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,subject:0
+msgid "Subject"
+msgstr "Subject"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,subtype_id:0
+msgid "Subtype"
+msgstr "Subtype"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.tax.agency:l10n_es_aeat_verifactu.aeat_tax_agency_form_view
+msgid "Suministro Facturas Emitidas"
+msgstr "Suministro Facturas Emitidas"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,verifactu_wsdl_out_test_address:0
+msgid "SuministroInformacion Test Address"
+msgstr "SuministroInformacion Test Address"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.tax.agency,verifactu_wsdl_out:0
+msgid "SuministroInformacion WSDL"
+msgstr "SuministroInformacion WSDL"
+
+#. module: l10n_es_aeat_verifactu
+#: field:mail.activity,summary:0
+#: field:mail.activity.type,summary:0
+#: field:verifactu.invoice.entry.response,message_summary:0
+msgid "Summary"
+msgstr "Summary"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:verifactu.invoice.entry.response,type:0
+msgid "System notification"
+msgstr "System notification"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.tax.agency:l10n_es_aeat_verifactu.aeat_tax_agency_form_view
+#: model:ir.actions.act_window,name:l10n_es_aeat_verifactu.aeat_tax_agency_action
+#: model:ir.ui.menu,name:l10n_es_aeat_verifactu.aeat_tax_agency_menu
+msgid "Tax Agency"
+msgstr "Tax Agency"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.verifactu.registration.keys:l10n_es_aeat_verifactu.aeat_verifactu_registration_keys_view_search
+msgid "Tax Type"
+msgstr "Tax Type"
+
+#. module: l10n_es_aeat_verifactu
+#: field:aeat.verifactu.map.lines,taxes:0
+msgid "Taxes"
+msgstr "Taxes"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_from_ref
+msgid "Technical"
+msgstr "Technical"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,notification_ids:0
+msgid "Technical field holding the message notifications. Use notified_partner_ids to access notified partners."
+msgstr "Technical field holding the message notifications. Use notified_partner_ids to access notified partners."
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.tax.agency:l10n_es_aeat_verifactu.aeat_tax_agency_form_view
+msgid "Test Address"
+msgstr "Test Address"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.tax.agency:l10n_es_aeat_verifactu.aeat_tax_agency_form_view
+msgid "Test Base URL"
+msgstr "Test Base URL"
+
+#. module: l10n_es_aeat_verifactu
+#: help:res.company,verifactu_description:0
+msgid "The description for Verifactu invoices if not set"
+msgstr "The description for Verifactu invoices if not set"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:217
+#, python-format
+msgid "The document %s cannot be sent to Verifactu because your company does not have a tax agency configured."
+msgstr "El documento %s no se puede enviar a Verifactu porque su empresa no tiene una agencia tributaria configurada."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:225
+#, python-format
+msgid "The document %s cannot be sent to Verifactu because your company does not have a verifactu developer configured."
+msgstr "El documento %s no se puede enviar a Verifactu porque su empresa no tiene un desarrollador de Verifactu configurado."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:234
+#, python-format
+msgid "The document %s cannot be sent to Verifactu because your company is not registered in Spain."
+msgstr "El documento %s no se puede enviar a Verifactu porque su empresa no está registrada en España."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:288
+#, python-format
+msgid "The document %s cannot be sent to Verifactu because your partner does not vat assigned."
+msgstr "El documento %s no se puede enviar a Verifactu porque su socio no tiene asignado el IVA."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:243
+#, python-format
+msgid "The invoice %s cannot be sent to Verifactu because it does not have a fiscal position."
+msgstr "La factura %s no se puede enviar a Verifactu porque no tiene posición fiscal."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:261
+#, python-format
+msgid "The invoice %s cannot be sent to Verifactu because it does not have a registration key."
+msgstr "La factura %s no se puede enviar a Verifactu porque no tiene una clave de registro."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:252
+#, python-format
+msgid "The invoice %s cannot be sent to Verifactu because it does not have a tax key."
+msgstr "La factura %s no se puede enviar a Verifactu porque no tiene una clave impuestos."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:271
+#, python-format
+msgid "The invoice %s cannot be sent to Verifactu because it does not have all taxes mapped."
+msgstr "La factura %s no se puede enviar a Verifactu porque no tiene todos los impuestos asignados."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:302
+#, python-format
+msgid "The invoice %s cannot be sent to Verifactu becauseit does not have any taxes."
+msgstr "La factura %s no se puede enviar a Verifactu porque no tiene todos los impuestos asignados."
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "The last attemp to sent to Verifactu has failed"
+msgstr "El último intento de envío a Verifactu ha fallado"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/mail_activity.py:181
+#, python-format
+msgid "The requested operation cannot be completed due to security restrictions. Please contact your system administrator.\n"
+"\n"
+"(Document type: %s, Operation: %s)"
+msgstr "The requested operation cannot be completed due to security restrictions. Please contact your system administrator.\n"
+"\n"
+"(Document type: %s, Operation: %s)"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:1261
+#, python-format
+msgid "The value in l10n_es_aeat_verifactu.verifactu_batch system parameter must be an integer. Please, check the value of the parameter."
+msgstr "The value in l10n_es_aeat_verifactu.verifactu_batch system parameter must be an integer. Please, check the value of the parameter."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry_response.py:71
+#, python-format
+msgid "There has been an error when trying to connect to Verifactu"
+msgstr "Se ha producido un error al intentar conectarse a Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry_response.py:99
+#, python-format
+msgid "There is an error with one or more invoices"
+msgstr "Hay un error con una o más facturas"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_invoice.py:1015
+#, python-format
+msgid "This invoice is not veri*FACTU enabled."
+msgstr "La factura no tiene veri*FACTU activado."
+
+#. module: l10n_es_aeat_verifactu
+#: view:certificate.verifactu:l10n_es_aeat_verifactu.certificate_verifactu_form_view
+msgid "To Active"
+msgstr "Para activar"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,to_read:0
+msgid "To read"
+msgstr "Para leer"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,type:0
+msgid "Type"
+msgstr "Tipo"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,message_unread:0
+msgid "Unread Messages"
+msgstr "Mensajes sin leer"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,verifactu_use_connector:0
+msgid "Use connector"
+msgstr "Use connector"
+
+#. module: l10n_es_aeat_verifactu
+#: help:res.partner,aeat_identification_type:0
+msgid "Used to specify an identification type to send to AEAT. Normally for sending national and export invoices to AEAT where the customer country is not Spain, it would calculate an identification type of 04 if the VAT field is filled and 06 if it was not. This field is to specify types of 03 through 05, in the event that the customer doesn't identify with a foreign VAT and instead with their passport or residential certificate. If there is no value it will work as before."
+msgstr "Used to specify an identification type to send to AEAT. Normally for sending national and export invoices to AEAT where the customer country is not Spain, it would calculate an identification type of 04 if the VAT field is filled and 06 if it was not. This field is to specify types of 03 through 05, in the event that the customer doesn't identify with a foreign VAT and instead with their passport or residential certificate. If there is no value it will work as before."
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/mail_activity.py:182
+#, python-format
+msgid "User:"
+msgstr "User:"
+
+#. module: l10n_es_aeat_verifactu
+#: help:verifactu.invoice.entry.response,vote_user_ids:0
+msgid "Users that voted for this message"
+msgstr "Users that voted for this message"
+
+#. module: l10n_es_aeat_verifactu
+#: view:website:account.report_invoice_document
+msgid "VERI*FACTU"
+msgstr "VERI*FACTU"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.ui.menu,name:l10n_es_aeat_verifactu.certificate_verifactu_parent_menu
+msgid "VERIFACTU"
+msgstr "VERIFACTU"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.ui.menu,name:l10n_es_aeat_verifactu.certificate_verifactu_menu
+msgid "VERIFACTU Certificate"
+msgstr "VERIFACTU Certificado"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.ui.menu,name:l10n_es_aeat_verifactu.verifactu_developer_menu
+msgid "VERIFACTU Developer"
+msgstr "VERIFACTU Desarrollador"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_content_sent:0
+msgid "VERIFACTU last content sent"
+msgstr "VERIFACTU ultimo contenido enviado"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_header_sent:0
+msgid "VERIFACTU last header sent"
+msgstr "VERIFACTU ultima cabecera enviada"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_state:0
+msgid "VERIFACTU send state"
+msgstr "VERIFACTU estado de envío"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.tax.agency:l10n_es_aeat_verifactu.aeat_tax_agency_form_view
+msgid "Validar QR"
+msgstr "Validar QR"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_from_ref
+msgid "Veri*FACTU"
+msgstr "Veri*FACTU"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_from_ref
+msgid "Veri*FACTU Information"
+msgstr "Veri*FACTU Información"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_from_ref
+msgid "Veri*FACTU Result"
+msgstr "Veri*FACTU Resultado"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.actions.act_window,name:l10n_es_aeat_verifactu.action_verifactu_invoice_entry
+msgid "VeriFactu Invoice"
+msgstr "VeriFactu Factura"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,last_verifactu_invoice_entry_id:0
+#: field:account.invoice,verifactu_invoice_entry_ids:0
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_verifactu_invoice_entry
+#: field:res.company,last_verifactu_invoice_entry_id:0
+#: view:verifactu.invoice.entry:l10n_es_aeat_verifactu.view_verifactu_invoice_entry_form
+msgid "VeriFactu Invoice envios"
+msgstr "VeriFactu Invoice envios"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.actions.act_window,name:l10n_es_aeat_verifactu.action_verifactu_invoice_entry_response
+msgid "VeriFactu Invoice response"
+msgstr "VeriFactu respuestas de envío"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.tax.agency:l10n_es_aeat_verifactu.aeat_tax_agency_form_view
+msgid "Verifactu"
+msgstr "Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,verifactu_developer_id:0
+msgid "Verifactu Developer"
+msgstr "Verifactu Desarrollador"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_hash:0
+msgid "Verifactu HASH"
+msgstr "Verifactu HASH"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_hash_string:0
+msgid "Verifactu HASH String"
+msgstr "Verifactu HASH String"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_qr_url:0
+msgid "Verifactu QR URL"
+msgstr "Verifactu QR URL"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.ui.menu,name:l10n_es_aeat_verifactu.menu_aeat_verifactu_registration_keys
+msgid "Verifactu Registration Keys"
+msgstr "Verifactu Claves de registro"
+
+#. module: l10n_es_aeat_verifactu
+#: view:verifactu.invoice.entry.response:l10n_es_aeat_verifactu.verifactu_invoice_entry_response_view_form
+msgid "Verifactu Response"
+msgstr "Verifactu Respuestas"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,last_verifactu_response_line_id:0
+msgid "Verifactu Response Line"
+msgstr "Verifactu Respuestas lineas"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_response_line_ids:0
+msgid "Verifactu Response Lines"
+msgstr "Verifactu respuestas lineas"
+
+#. module: l10n_es_aeat_verifactu
+#: model:res.groups,name:l10n_es_aeat_verifactu.group_verifactu_responsible
+msgid "Verifactu Responsible"
+msgstr "Verifactu Responsable"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_verifactu_invoice_entry_response_line
+msgid "Verifactu Send Log"
+msgstr "Verifactu Log envio"
+
+#. module: l10n_es_aeat_verifactu
+#: model:ir.model,name:l10n_es_aeat_verifactu.model_verifactu_invoice_entry_response
+msgid "Verifactu Send Response"
+msgstr "Verifactu respuestas de envío"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.fiscal.position,verifactu_active:0
+msgid "Verifactu active"
+msgstr "Verifactu activo"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Verifactu cancelled"
+msgstr "Verifactu cancelado"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_csv:0
+#: field:verifactu.invoice.entry.response,verifactu_csv:0
+msgid "Verifactu csv"
+msgstr "Verifactu csv"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_description:0
+#: field:res.company,verifactu_description:0
+msgid "Verifactu description"
+msgstr "Verifactu descripción"
+
+#. module: l10n_es_aeat_verifactu
+#: view:verifactu.developer:l10n_es_aeat_verifactu.verifactu_developer_form_view
+msgid "Verifactu developer"
+msgstr "Verifactu desarrollador"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Verifactu error"
+msgstr "Verifactu error"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Verifactu failed"
+msgstr "Verifactu fallido"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Verifactu filters"
+msgstr "Verifactu filtros"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Verifactu not sent"
+msgstr "Verifactu no enviado"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_refund_specific_invoice_type:0
+msgid "Verifactu refund specific invoice type"
+msgstr "Verifactu refund specific invoice type"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_refund_type:0
+msgid "Verifactu refund type"
+msgstr "Verifactu refund type"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_registration_date:0
+msgid "Verifactu registration date"
+msgstr "Verifactu fecha de registro"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.fiscal.position,verifactu_registration_key:0
+#: field:account.invoice,verifactu_registration_key:0
+msgid "Verifactu registration key"
+msgstr "Verifactu clave de registro"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_return:0
+msgid "Verifactu return"
+msgstr "Verifactu retorno"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.invoice,verifactu_send_date:0
+msgid "Verifactu send date"
+msgstr "Verifactu fecha de envío"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry,send_state:0
+#: field:verifactu.invoice.entry.response.line,send_state:0
+msgid "Verifactu send state"
+msgstr "Verifactu estado envío"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/verifactu_invoice_entry.py:362
+#, python-format
+msgid "Verifactu sending"
+msgstr "Verifactu envío"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "Verifactu sent"
+msgstr "Verifactu enviado"
+
+#. module: l10n_es_aeat_verifactu
+#: field:res.company,verifactu_start_date:0
+msgid "Verifactu start date"
+msgstr "Verifactu fecha inicio"
+
+#. module: l10n_es_aeat_verifactu
+#: field:account.fiscal.position,verifactu_tax_key:0
+#: field:account.invoice,verifactu_tax_key:0
+#: field:aeat.verifactu.registration.keys,verifactu_tax_key:0
+msgid "Verifactu tax key"
+msgstr "Verifactu clave impuesto"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.developer,version:0
+msgid "Version"
+msgstr "Versión"
+
+#. module: l10n_es_aeat_verifactu
+#: field:verifactu.invoice.entry.response,vote_user_ids:0
+msgid "Votes"
+msgstr "Votes"
+
+#. module: l10n_es_aeat_verifactu
+#: view:aeat.tax.agency:l10n_es_aeat_verifactu.aeat_tax_agency_form_view
+msgid "WSDL"
+msgstr "WSDL"
+
+#. module: l10n_es_aeat_verifactu
+#: selection:res.company,verifactu_send_mode:0
+msgid "With delay"
+msgstr "With delay"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_filter_verifactu
+msgid "With modifications not sent to Verifactu"
+msgstr "Con modificaciones no enviado a Verifactu"
+
+#. module: l10n_es_aeat_verifactu
+#: code:addons/l10n_es_aeat_verifactu/models/account_journal.py:57
+#, python-format
+msgid "You can't have a sale journal with veri*FACTU enabledand not restricted hash modification."
+msgstr "No es posible tener un diario de ventas con veri*FACTU habilitado y sin modificación de hash restringida."
+
+#. module: l10n_es_aeat_verifactu
+#: view:l10n.es.aeat.verifactu.password:l10n_es_aeat_verifactu.l10n_es_verifactu_password_wizard_view
+msgid "or"
+msgstr "or"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.fiscal.position:l10n_es_aeat_verifactu.view_account_position_form
+#: view:res.company:l10n_es_aeat_verifactu.view_company_verifactu_form
+msgid "veri*FACTU"
+msgstr "veri*FACTU"
+
+#. module: l10n_es_aeat_verifactu
+#: view:account.invoice:l10n_es_aeat_verifactu.view_invoice_wtree_verifactu
+msgid "verifactu_state in ['not_sent', 'sent_w_errors'] and verifactu_enabled and verifactu_hash_string"
+msgstr "verifactu_state in ['not_sent', 'sent_w_errors'] and verifactu_enabled and verifactu_hash_string"
+
