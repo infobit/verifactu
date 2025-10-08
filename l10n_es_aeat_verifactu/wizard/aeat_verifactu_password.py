@@ -16,9 +16,9 @@ _logger = logging.getLogger(__name__)
 try:
     import OpenSSL.crypto
 
-    if tuple(map(int, OpenSSL.__version__.split('.'))) < (0, 15):
+    if tuple(map(int, OpenSSL.__version__.split('.'))) < (0, 13):
         _logger.warning(
-            'OpenSSL version is not supported. Upgrade to 0.15 or greater.')
+            'OpenSSL version is not supported. Upgrade to 0.13 or greater.')
 except (ImportError, IOError) as err:
     _logger.debug(err)
 
@@ -62,9 +62,9 @@ class l10nEsAeatVerifactuPassword(models.TransientModel):
             os.path.abspath(config['data_dir']), 'certificates', release.series, self.env.cr.dbname, self.folder)
 	#directory = '/home/administrador/firmas'
         file = base64.decodestring(record.file)
-        if tuple(map(int, OpenSSL.__version__.split('.'))) < (0, 15):
+        if tuple(map(int, OpenSSL.__version__.split('.'))) < (0, 13):
             raise exceptions.Warning(
-                _('OpenSSL version is not supported. Upgrade to 0.15 '
+                _('OpenSSL version is not supported. Upgrade to 0.13 '
                   'or greater.'))
         try:
             if directory and not os.path.exists(directory):

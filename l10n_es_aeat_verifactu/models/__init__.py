@@ -6,10 +6,10 @@ import certificate_verifactu
 import account_journal
 import res_company
 import mail_activity
-from . import verifactu_invoice_entry
-from . import verifactu_invoice_entry_response     
-from . import verifactu_invoice_entry_response_line 
-from . import account_invoice
-from . import aeat_tax_agency
+import verifactu_invoice_entry
+import verifactu_invoice_entry_response     
+import verifactu_invoice_entry_response_line 
+import account_invoice
+import aeat_tax_agency
 import account_fiscal_position
 import res_partner
