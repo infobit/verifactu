@@ -251,7 +251,7 @@ class VerifactuInvoiceEntry(models.Model):
         doc_vals["verifactu_return"] = verifactu_response_line
         send_error = False
         if hasattr(verifactu_response_line, "CodigoErrorRegistro"):
-            send_error = "{} | {}".format(
+            send_error = u"{} | {}".format(
                 str(verifactu_response_line["CodigoErrorRegistro"]),
                 str(verifactu_response_line["DescripcionErrorRegistro"]),
             )
@@ -278,7 +278,7 @@ class VerifactuInvoiceEntry(models.Model):
                         estado_registro = "AceptadoConErrores"
                         response_line.send_state = "accepted_with_errors"
                         response_line.entry_id.send_state = "accepted_with_errors"
-                    send_error = "{} | {}".format(
+                    send_error = u"{} | {}".format(
                         str(registroDuplicado["CodigoErrorRegistro"]),
                         str(registroDuplicado["DescripcionErrorRegistro"]),
                     )

@@ -271,7 +271,7 @@ class account_invoice(models.Model):
                 )
                 % self.name
             )
-        if not self.partner_id.vat:
+        if not self.partner_id.vat and not self.partner_id.aeat_simplified_invoice:
             raise UserError(
                 _(
                     "The document %s cannot be sent to Verifactu because your "

@@ -41,6 +41,7 @@ Para configurar este módulo es necesario:
         "security/verifactu_security.xml",
         'security/ir.model.access.csv',
         "views/certificate_verifactu_view.xml",
+        "views/verifactu_developer_view.xml",
         "views/aeat_tax_agency_view.xml",
         "views/account_fiscal_position_view.xml",
         "views/res_company_view.xml",
