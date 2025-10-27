@@ -16,9 +16,9 @@ class res_company(models.Model):
     _inherit = "res.company"
 
     tax_agency_id = fields.Many2one("aeat.tax.agency", "AEAT Agency")
-    verifactu_enabled = fields.Boolean(string="Enable veri*FACTU")
-    verifactu_test = fields.Boolean(string="Is it the veri*FACTU test environment?")
-    verifactu_description = fields.Text(default="/", size=500, help="The description for Verifactu invoices if not set",)
+    verifactu_enabled = fields.Boolean(string="Enable veri*FACTU", tracking=True)
+    verifactu_test = fields.Boolean(string="Is it the veri*FACTU test environment?", tracking=True)
+    verifactu_description = fields.Text(default="/", size=500, help="The description for Verifactu invoices if not set", tracking=True)
     #url_qrverifactu_test = fields.Char(string="Url QR Verifactu Pruebas", default="https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR?")
     #url_qrverifactu = fields.Char(string="Url QR Verifactu", default="https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR?")
     #url_qrnoverifactu_test = fields.Char(string="Url QR No Verifactu", default="https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQRNoVerifactu?")
@@ -33,13 +33,16 @@ class res_company(models.Model):
         comodel_name="verifactu.developer",
         string="Verifactu Developer",
         ondelete="set null",
+        tracking=True,
     )
     verifactu_start_date = fields.Date(
+        tracking=True,
         help="If this field is set, the verifactu won't be enabled on invoices with lower "
         "invoice date. If not set, the verifactu can be enabled on all invoice dates"
     )
     verifactu_use_connector = fields.Boolean(
         string='Use connector',
+        tracking=True,
         help="Check it to use connector instead of sending the invoice "
              "directly when it's validated")
     verifactu_method = fields.Selection(
