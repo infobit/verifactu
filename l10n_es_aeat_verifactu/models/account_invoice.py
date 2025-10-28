@@ -167,11 +167,11 @@ class account_invoice(models.Model):
         copy=False,
     )
 
-    @api.multi
+    """@api.multi
     def action_invoice_cancel(self):
         if self.filtered(lambda inv: inv.state not in ['draft', 'proforma'] and inv.verifactu_enabled):
             raise UserError(_("Esta factura no se puede cancelar, ni modificar"))
-        return self.action_cancel()
+        return self.action_cancel()"""
 
     @api.model
     def _selection_verifactu_reference_models(self):
@@ -602,10 +602,12 @@ class account_invoice(models.Model):
                 {
                     "Subsanacion": "S",
                     # "RechazoPrevio": "X",
-                    "Huella": self._set_subsanation_verifactu_hash(),
+                    #"Huella": self._set_subsanation_verifactu_hash(),
                     #"Encadenamiento": self._get_chaining_invoice_dict(), #infobit
                 }
             )
+            if self.last_verifactu_response_line_id.send_state == "incorrect":
+                inv_dict["RechazoPrevio"] = "S"
         registroAlta.setdefault("RegistroAlta", inv_dict)
         return registroAlta
 
@@ -838,12 +840,14 @@ class account_invoice(models.Model):
                 "NIF": self.company_id.partner_id.vat[2:] #_parse_aeat_vat_info()[2],
             },
         }
-        registration_date = self.verifactu_registration_date
+        """registration_date = self.verifactu_registration_date
         if (
             self.verifactu_state == "sent_w_errors"
             and registration_date < fields.Datetime.now()
             and self.verifactu_send_error[:4] == "2004"
-        ):
+        ):"""
+        incident = self.env.context.get("verifactu_incident", False)
+        if incident:
             header.update({"RemisionVoluntaria": {"Incidencia": "S"}})
         return header
 
