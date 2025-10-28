@@ -167,11 +167,11 @@ class account_invoice(models.Model):
         copy=False,
     )
 
-    """@api.multi
+    @api.multi
     def action_invoice_cancel(self):
         if self.filtered(lambda inv: inv.state not in ['draft', 'proforma'] and inv.verifactu_enabled):
             raise UserError(_("Esta factura no se puede cancelar, ni modificar"))
-        return self.action_cancel()"""
+        return self.action_cancel()
 
     @api.model
     def _selection_verifactu_reference_models(self):
