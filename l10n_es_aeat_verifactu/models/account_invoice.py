@@ -194,7 +194,7 @@ class account_invoice(models.Model):
                    _("Por favor, indique el tipo de factura rectificativa. (Verifactu refund type)"))
            if record.verifactu_enabled and record.verifactu_state == "not_sent":
                 record._check_verifactu_configuration()
-                record.verifactu_registration_date = datetime.now() #utc_time #utc_time.astimezone(pytz.timezone('Europe/Madrid'))
+                record.verifactu_registration_date = datetime.now() #pytz.utc) #datetime.now() #utc_time #utc_time.astimezone(pytz.timezone('Europe/Madrid'))
                 record._generate_verifactu_chaining()
                 record._compute_verifactu_qr_url()
         return res
@@ -492,13 +492,16 @@ class account_invoice(models.Model):
 
     def _get_verifactu_registration_date(self):
         # Date format must be ISO 8601
+        # Zona horaria de Madrid
         madrid = pytz.timezone('Europe/Madrid')
-        dt = datetime.strptime(self.verifactu_registration_date, '%Y-%m-%d %H:%M:%S')
-        dt2 = dt + timedelta(hours=2)
-        #create_date = datetime.strptime(dt, '%Y-%m-%d %H:%M:%S')
-        create_date = madrid.localize(dt2)
-        iso_date = create_date.isoformat()
-        #raise Warning(iso_date)
+        # Parseamos la fecha (asumimos que está en formato string sin tz info)
+        dt_local = datetime.strptime(self.verifactu_registration_date, '%Y-%m-%d %H:%M:%S')
+        utc = pytz.utc
+        dt_utc = utc.localize(dt_local)
+        # Devolvemos en formato ISO 8601 sin 'timespec' (compatible con todas las versiones)
+        iso_date = dt_utc.isoformat()
+        # Si quieres el formato con separador de zona horaria tipo '+00:00' (no '+0000'):
+        #iso_date = iso_date[:-2] + ':' + iso_date[-2:]
         return iso_date
 
     @api.model
@@ -620,9 +623,11 @@ class account_invoice(models.Model):
                 {
                     "Subsanacion": "S",
                     # "RechazoPrevio": "X",
-                    "Huella": self._set_subsanation_verifactu_hash(),
+                    #"Huella": self._set_subsanation_verifactu_hash(),
                 }
             )
+            if self.last_verifactu_response_line_id.send_state == "incorrect":
+                inv_dict["RechazoPrevio"] = "S"
         registroAlta.setdefault("RegistroAlta", inv_dict)
         return registroAlta
 
@@ -930,7 +935,7 @@ class account_invoice(models.Model):
                 "NIF": self.company_id.partner_id.vat[2:] #_parse_aeat_vat_info()[2],
             },
         }
-        registration_date = self.verifactu_registration_date
+        """registration_date = self.verifactu_registration_date
         # Si han pasado más de 120 segundos de la fecha y hora de emisión de la factura
         # devuelve error 2004: El valor del campo FechaHoraHusoGenRegistro debe ser
         # la fecha actual del sistema de la AEAT.
@@ -939,7 +944,9 @@ class account_invoice(models.Model):
             self.verifactu_state == "sent_w_errors"
             and registration_date < fields.Datetime.now()
             and self.verifactu_send_error[:4] == "2004"
-        ):
+        ):"""
+        incident = self.env.context.get("verifactu_incident", False)
+        if incident:
             header.update({"RemisionVoluntaria": {"Incidencia": "S"}})
         return header
 
