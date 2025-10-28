@@ -464,9 +464,13 @@ class account_invoice(models.Model):
     def _get_verifactu_registration_date(self):
         # Date format must be ISO 8601
         madrid = pytz.timezone('Europe/Madrid')
-        dt = datetime.strptime(self.verifactu_registration_date, '%Y-%m-%d %H:%M:%S')
-        dt2 = dt + timedelta(hours=2)
-        create_date = madrid.localize(dt2)
+        dt_local = datetime.strptime(self.verifactu_registration_date, '%Y-%m-%d %H:%M:%S')
+        utc = pytz.utc
+        dt_utc = utc.localize(dt_local)
+        # Devolvemos en formato ISO 8601 sin 'timespec' (compatible con todas las versiones)
+        iso_date = dt_utc.isoformat()
+        # Si quieres el formato con separador de zona horaria tipo '+00:00' (no '+0000'):
+        #iso_date = iso_date[:-2] + ':' + iso_date[-2:]
         iso_date = create_date.isoformat()
         return iso_date
 
