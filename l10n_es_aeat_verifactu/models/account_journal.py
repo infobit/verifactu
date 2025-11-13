@@ -24,7 +24,7 @@ class account_journal(models.Model):
     company_verifactu_enabled = fields.Boolean(
         related="company_id.verifactu_enabled", string="Company veri*FACTU"
     )
-    verifactu_enabled = fields.Boolean(string="Enable veri*FACTU", default=True)
+    verifactu_enabled = fields.Boolean(string="Enable veri*FACTU", default=False)
 
     @api.depends(
         "company_id", "company_id.verifactu_enabled", "verifactu_enabled", "type"
@@ -52,20 +52,20 @@ class account_journal(models.Model):
                 )
             )
 
-    @api.multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            if (
+    @api.model
+    def create(self, vals):
+        #for vals in vals_list:
+        if (
                 "restrict_mode_hash_table" in vals
                 and not vals["restrict_mode_hash_table"]
-            ):
+        ):
                 company = self.env["res.company"].browse(vals.get("company_id"))
                 self.check_hash_modification(
                   vals.get("verifactu_enabled"),
                   vals.get("type"),
                   company.verifactu_enabled,
                 )
-        return super(account_journal, self).create(vals_list)
+        return super(account_journal, self).create(vals)
 
     @api.multi
     def write(self, vals):
