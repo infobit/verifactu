@@ -165,6 +165,7 @@ class VerifactuInvoiceEntry(models.Model):
                 verifactu_incident=True
             )._send_documents_to_verifactu()
             current_records._send_documents_to_verifactu()
+            #raise Warning(outdated_records)
         return True
 
     def _get_verifactu_aeat_header(self):

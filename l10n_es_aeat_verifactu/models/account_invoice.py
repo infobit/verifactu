@@ -187,9 +187,10 @@ class account_invoice(models.Model):
     @api.multi
     def invoice_validate(self):
         res = super(account_invoice, self).invoice_validate() #action_number()
+        #raise Warning(res)
         for record in self:
            if record.type == 'out_refund' and not record.verifactu_refund_type:
-              raise osv.except_osv(
+              raise ValidationError(
                    _('Aviso'),
                    _("Por favor, indique el tipo de factura rectificativa. (Verifactu refund type)"))
            if record.verifactu_enabled and record.verifactu_state == "not_sent":
@@ -212,7 +213,7 @@ class account_invoice(models.Model):
 
     def _check_verifactu_configuration(self):
         if not self.company_id.tax_agency_id:
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"), 
                 _(  "The document %s cannot be sent to Verifactu because your "
                     "company does not have a tax agency configured."
@@ -220,7 +221,7 @@ class account_invoice(models.Model):
                 % self.name
             )
         if not self.company_id.verifactu_developer_id:
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"),
                 _(
                     "The document %s cannot be sent to Verifactu because your "
@@ -229,7 +230,7 @@ class account_invoice(models.Model):
                 % self.name
             )
         if not self.company_id.country_id or (self.company_id.country_id and self.company_id.country_id.code != "ES"):
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"),
                 _(
                     "The document %s cannot be sent to Verifactu because your "
@@ -238,7 +239,7 @@ class account_invoice(models.Model):
                 % self.name
             )
         if not self.fiscal_position:
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"),
                 _(
                     "The invoice %s cannot be sent to Verifactu because it "
@@ -247,7 +248,7 @@ class account_invoice(models.Model):
                 % self.name
             )
         if not self.verifactu_tax_key:
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"),
                 _(
                     "The invoice %s cannot be sent to Verifactu because it "
@@ -256,7 +257,7 @@ class account_invoice(models.Model):
                 % self.name
             )
         if not self.verifactu_registration_key:
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"),
                 _(
                     "The invoice %s cannot be sent to Verifactu because it "
@@ -266,7 +267,7 @@ class account_invoice(models.Model):
             )
 
         if not self._check_all_taxes_mapped():
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"),
                 _(
                     "The invoice %s cannot be sent to Verifactu because it "
@@ -275,7 +276,7 @@ class account_invoice(models.Model):
                 % self.name
             )
         if self.date_invoice > fields.Datetime.now():
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"),
                 _(
                     "La factura  %s no puede ser validada "
@@ -283,15 +284,22 @@ class account_invoice(models.Model):
                 )
                 % self.name
             )
-        if not self.partner_id.vat and not self.partner_id.aeat_simplified_invoice:
-            raise osv.except_osv(
+        if not self.partner_id.vat: #or not self.partner_id.aeat_simplified_invoice:
+            raise ValidationError(
                 _(
                     "The document %s cannot be sent to Verifactu because your "
                     "partner does not vat assigned."
                 )
                 % self.name
             )
-           
+        if not self.partner_id.vat and not self.partner_id.aeat_simplified_invoice:
+            raise ValidationError(
+                _(
+                    "The document %s cannot be sent to Verifactu because your "
+                    "partner does not vat assigned."
+                )
+                % self.name
+            )
         return
 
 
@@ -379,7 +387,7 @@ class account_invoice(models.Model):
                 )
         except psycopg2.OperationalError as err:
             if err.pgcode == "55P03":  # could not obtain the lock
-                raise osv.except_osv(
+                raise ValidationError(
                    _('Aviso'),
                    _("Could not obtain last document sent to verifactu.")) #from err
             raise
@@ -695,7 +703,7 @@ class account_invoice(models.Model):
         req_tax = re_lines.mapped("tax_ids") & taxes_req
         return req_tax
 
-    def _get_verifactu_taxes_and_total(self):
+    """def _get_verifactu_taxes_and_total(self):
         self.ensure_one()
         taxes_dict = {}
         taxes_dict.setdefault("DetalleDesglose", [])
@@ -769,8 +777,133 @@ class account_invoice(models.Model):
             taxes_dict,
             amount_tax,
             amount_total,
-        )
+        )"""
 
+    def _get_verifactu_exempt_cause(
+        self, tax_line, taxes_E1, taxes_E2, taxes_E3, taxes_E4, taxes_E5
+    ):
+        """
+        E1      Exenta por el artículo 20
+        E2      Exenta por el artículo 21
+        E3      Exenta por el artículo 22
+        E4      Exenta por los artículos 23 y 24
+        E5      Exenta por el artículo 25
+        """
+        tax = tax_line #["tax"]
+        if tax in taxes_E1:
+            return "E1"
+        elif tax in taxes_E2:
+            return "E2"
+        elif tax in taxes_E3:
+            return "E3"
+        elif tax in taxes_E4:
+            return "E4"
+        return "E5"
+
+
+    def _get_verifactu_taxes_and_total(self):
+        self.ensure_one()
+        taxes_dict = {}
+        taxes_dict.setdefault("DetalleDesglose", [])
+        tax_lines = []
+        document_date = self._get_document_fiscal_date()
+        taxes_S1 = self._get_verifactu_taxes_map(["S1"], document_date)
+        taxes_S2 = self._get_verifactu_taxes_map(["S2"], document_date)
+        taxes_N1 = self._get_verifactu_taxes_map(["N1"], document_date)
+        taxes_N2 = self._get_verifactu_taxes_map(["N2"], document_date)
+        taxes_req = self._get_verifactu_taxes_map(["RE"], document_date)
+        taxes_E1 = self._get_verifactu_taxes_map(["E1"], document_date)
+        taxes_E2 = self._get_verifactu_taxes_map(["E2"], document_date)
+        taxes_E3 = self._get_verifactu_taxes_map(["E3"], document_date)
+        taxes_E4 = self._get_verifactu_taxes_map(["E4"], document_date)
+        taxes_E5 = self._get_verifactu_taxes_map(["E5"], document_date)
+        taxes_not_in_total = self._get_verifactu_taxes_map(
+            ["TaxNotIncludedInTotal"], document_date
+        )
+        base_not_in_total = self._get_verifactu_taxes_map(
+            ["BaseNotIncludedInTotal"], document_date
+        )
+        excluded_taxes = taxes_not_in_total + base_not_in_total
+        breakdown_taxes = taxes_S1 + taxes_S2 + taxes_N1 + taxes_N2
+        not_in_amount_total = 0.0
+        not_in_taxes = 0.0
+        exempt_taxes = taxes_E1 + taxes_E2 + taxes_E3 + taxes_E4 + taxes_E5
+        tax_dict = {}
+        vtax = []
+        for tax_line in self.tax_line: #self.invoice_line:
+            #BUSCAR IMPUESTO
+            imp = self.env['account.tax'].search([('name', '=', tax_line.name)])
+            if imp:
+               if imp in taxes_not_in_total:
+                   not_in_amount_total += tax_line["amount"]
+               elif imp in base_not_in_total:
+                   not_in_amount_total += tax_line["base"]
+               if imp in breakdown_taxes or imp in exempt_taxes:
+                  tax_dict = {
+                    "Impuesto": self.verifactu_tax_key,
+                    "ClaveRegimen": self.verifactu_registration_key_code,
+                  }
+                  operation_type = self._get_verifactu_operation_type(
+                    imp, taxes_S1, taxes_S2, taxes_N1, taxes_N2
+                  )
+                  #raise Warning(operation_type)
+                  if operation_type != "exempt":
+                    tax_dict.update(
+                        {
+                            "CalificacionOperacion": operation_type,
+                        }
+                    )
+                  else:
+                    tax_dict.update(
+                        {
+                            "OperacionExenta": self._get_verifactu_exempt_cause(
+                                imp,
+                                taxes_E1,
+                                taxes_E2,
+                                taxes_E3,
+                                taxes_E4,
+                                taxes_E5,
+                            )
+                        }
+                    )
+                  #tax_dict.update(tax_dict)
+                  #if operation_type in ("N1", "N2", "exempt"):
+                  tax_dict["BaseImponibleOimporteNoSujeto"] = tax_line["base"]
+                  if tax_line.invoice_id.type == 'out_refund':
+                     tax_dict["BaseImponibleOimporteNoSujeto"] = -tax_line.base
+                  if operation_type not in ['N1', 'N2', "exempt"]:
+                    tax_dict["TipoImpositivo"] = round(imp.amount * 100,2)
+                    tax_dict["CuotaRepercutida"] = tax_line.amount
+                    if tax_line.invoice_id.type == 'out_refund':
+                       tax_dict["CuotaRepercutida"] = -tax_line.amount
+                    #RECARGO DE EQUIVALENCIA 
+                    reqeq = self.env['account.fiscal.position.tax'].search([('tax_src_id', '=', imp.id), ('tax_dest_id', 'in', taxes_req.ids)])
+                    if reqeq:
+                      tax_line_req = self.tax_line.filtered(lambda x: x.name == reqeq[0].tax_dest_id.name)
+                      if tax_line_req:
+                         tipo_recargo = round(reqeq[0].tax_dest_id.amount * 100,2)
+                         cuota_recargo = tax_line_req[0].amount
+                         if tax_line.invoice_id.type == 'out_refund':
+                            cuota_recargo = -tax_line_req[0].amount
+                         tax_dict['TipoRecargoEquivalencia'] = tipo_recargo
+                         tax_dict['CuotaRecargoEquivalencia'] = cuota_recargo
+
+                  taxes_dict["DetalleDesglose"].append(tax_dict)
+               elif imp in excluded_taxes:
+                not_in_taxes += tax_line["amount"]
+               elif imp not in taxes_req:
+                raise ValidationError(_("%s tax is not mapped to Verifactu." % imp.name)) 
+        if self.type == 'out_refund':
+           amount_tax = -self.amount_tax - not_in_taxes
+        else:
+           amount_tax = self.amount_tax - not_in_taxes
+        amount_total = self.amount_total - not_in_amount_total
+        #raise Warning(taxes_dict)
+        return (
+            taxes_dict,
+            amount_tax,
+            amount_total,
+        )
 
     def _get_verifactu_operation_type(self, tax_line, taxes_S1, taxes_S2, taxes_N1, taxes_N2):
         """
@@ -788,7 +921,7 @@ class account_invoice(models.Model):
             return "N1"
         elif tax in taxes_N2:
             return "N2"
-        return "S1"
+        return "exempt"
 
         receiver = self._aeat_get_partner()
         (
@@ -979,7 +1112,7 @@ class account_invoice(models.Model):
     def _get_verifactu_developer_dict(self):
         #Datos del desarrollador del sistema informático
         if not self.company_id.verifactu_developer_id:
-            raise osv.except_osv(
+            raise ValidationError(
                 _("Aviso"),
                 _("Please, configure the verifactu developer in your company")
             )
@@ -1017,7 +1150,7 @@ class account_invoice(models.Model):
         """Inheritable method for exceptions control when sending veri*FACTU invoices."""
         res = super()._aeat_check_exceptions()
         if self.company_id.verifactu_enabled and not self.verifactu_enabled:
-            raise osv.except_osv(
+            raise ValidationError(
                   _("Aviso"),
                   _("This invoice is not veri*FACTU enabled."))
         return res
