@@ -607,7 +607,7 @@ class account_invoice(models.Model):
                 }
             )
             if self.last_verifactu_response_line_id.send_state == "incorrect":
-                inv_dict["RechazoPrevio"] = "S"
+                inv_dict["RechazoPrevio"] = "X"
         registroAlta.setdefault("RegistroAlta", inv_dict)
         return registroAlta
 
@@ -630,6 +630,28 @@ class account_invoice(models.Model):
               return valores
         return {"PrimerRegistro": "S"}
 
+    def _get_verifactu_exempt_cause(
+        self, tax_line, taxes_E1, taxes_E2, taxes_E3, taxes_E4, taxes_E5
+    ):
+        """
+        E1      Exenta por el artículo 20
+        E2      Exenta por el artículo 21
+        E3      Exenta por el artículo 22
+        E4      Exenta por los artículos 23 y 24
+        E5      Exenta por el artículo 25
+        """
+        tax = tax_line #["tax"]
+        if tax in taxes_E1:
+            return "E1"
+        elif tax in taxes_E2:
+            return "E2"
+        elif tax in taxes_E3:
+            return "E3"
+        elif tax in taxes_E4:
+            return "E4"
+        return "E5"
+
+
     def _get_verifactu_taxes_and_total(self):
         self.ensure_one()
         taxes_dict = {}
@@ -641,6 +663,11 @@ class account_invoice(models.Model):
         taxes_N1 = self._get_verifactu_taxes_map(["N1"], document_date)
         taxes_N2 = self._get_verifactu_taxes_map(["N2"], document_date)
         taxes_req = self._get_verifactu_taxes_map(["RE"], document_date)
+        taxes_E1 = self._get_verifactu_taxes_map(["E1"], document_date)
+        taxes_E2 = self._get_verifactu_taxes_map(["E2"], document_date)
+        taxes_E3 = self._get_verifactu_taxes_map(["E3"], document_date)
+        taxes_E4 = self._get_verifactu_taxes_map(["E4"], document_date)
+        taxes_E5 = self._get_verifactu_taxes_map(["E5"], document_date)
         taxes_not_in_total = self._get_verifactu_taxes_map(
             ["TaxNotIncludedInTotal"], document_date
         )
@@ -651,6 +678,7 @@ class account_invoice(models.Model):
         breakdown_taxes = taxes_S1 + taxes_S2 + taxes_N1 + taxes_N2
         not_in_amount_total = 0.0
         not_in_taxes = 0.0
+        exempt_taxes = taxes_E1 + taxes_E2 + taxes_E3 + taxes_E4 + taxes_E5
         tax_dict = {}
         vtax = []
         for tax_line in self.tax_line_ids: #self.invoice_line:
@@ -662,19 +690,37 @@ class account_invoice(models.Model):
                    not_in_amount_total += tax_line["amount"]
                elif imp in base_not_in_total:
                    not_in_amount_total += tax_line["base"]
-               if imp in breakdown_taxes:
-                   operation_type = self._get_operation_type(
-                    imp, taxes_S1, taxes_S2, taxes_N1, taxes_N2
-                   )
+               if imp in breakdown_taxes or imp in exempt_taxes:
                    tax_dict = {
                     "Impuesto": self.verifactu_tax_key,
                     "ClaveRegimen": self.verifactu_registration_key_code,
-                    "CalificacionOperacion": operation_type,
                    }
+                   operation_type = self._get_operation_type(
+                    imp, taxes_S1, taxes_S2, taxes_N1, taxes_N2
+                   )
+                   if operation_type != "exempt":
+                    tax_dict.update(
+                        {
+                            "CalificacionOperacion": operation_type,
+                        }
+                    )
+                   else:
+                    tax_dict.update(
+                        {
+                            "OperacionExenta": self._get_verifactu_exempt_cause(
+                                imp,
+                                taxes_E1,
+                                taxes_E2,
+                                taxes_E3,
+                                taxes_E4,
+                                taxes_E5,
+                            )
+                        }
+                    )
                    tax_dict["BaseImponibleOimporteNoSujeto"] = tax_line.base
                    if tax_line.invoice_id.type == 'out_refund':
                       tax_dict["BaseImponibleOimporteNoSujeto"] = -tax_line.base
-                   if operation_type not in ['N1', 'N2']:
+                   if operation_type not in ['N1', 'N2', 'exempt']:
                     tax_dict["TipoImpositivo"] = imp.amount
                     tax_dict["CuotaRepercutida"] = round(tax_line.amount,2)
                     if tax_line.invoice_id.type == 'out_refund':
@@ -723,7 +769,7 @@ class account_invoice(models.Model):
             return "N1"
         elif tax in taxes_N2:
             return "N2"
-        return "S1"
+        return "exempt"
     
     def _get_verifactu_receiver_dict(self):
         self.ensure_one()
