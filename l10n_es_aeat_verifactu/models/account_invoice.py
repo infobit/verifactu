@@ -635,7 +635,7 @@ class account_invoice(models.Model):
                 }
             )
             if self.last_verifactu_response_line_id.send_state == "incorrect":
-                inv_dict["RechazoPrevio"] = "S"
+                inv_dict["RechazoPrevio"] = "X"
         registroAlta.setdefault("RegistroAlta", inv_dict)
         return registroAlta
 
