@@ -197,6 +197,7 @@ class account_invoice(models.Model):
     @api.multi
     def resend_verifactu(self):
         for rec in self:
+          if rec.last_verifactu_invoice_entry_id.document_id.id != rec.id: #evita envio sobre la misma si esta es la ultima enviada
             if (
                 rec.verifactu_state == "sent_w_errors"
                 and rec.last_verifactu_invoice_entry_id
@@ -344,6 +345,8 @@ class account_invoice(models.Model):
                 }
                 if entry_type:
                     invoice_vals["entry_type"] = entry_type
+                if self.company_id.verifactu_developer_id:
+                   invoice_vals['verifactu_developer_id'] = self.company_id.verifactu_developer_id.id
                 invoice_entry = self.env["verifactu.invoice.entry"].create(invoice_vals)
                 self.last_verifactu_invoice_entry_id = invoice_entry
 
@@ -746,6 +749,8 @@ class account_invoice(models.Model):
         else:
            amount_tax = self.amount_tax - not_in_taxes
         amount_total = self.amount_total_signed - not_in_amount_total
+        if self.type == 'out_refund':
+           amount_total = -amount_total
         return (
             taxes_dict,
             amount_tax,
