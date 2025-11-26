@@ -9,7 +9,7 @@
                     decoration-success="send_state == 'correct'"
                     decoration-danger="send_state not in ('correct', 'accepted_with_errors')">
                 <field name="create_date"/>
-                <!--<field name="verifactu_chaining_id" />-->
+                <field name="verifactu_developer_id" />
                 <field name="document_id"/>
                 <field name="model"/>
                 <field name="document_name"/>

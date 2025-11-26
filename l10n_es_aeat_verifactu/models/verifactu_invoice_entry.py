@@ -42,11 +42,11 @@ class VerifactuInvoiceEntry(models.Model):
     _order = "id desc"
     _rec_name = "document_hash"
 
-    """verifactu_chaining_id = fields.Many2one(
-        "verifactu.chaining",
-        string="Chaining",
+    verifactu_developer_id = fields.Many2one(
+        "verifactu.developer",
+        string="Desarrollador encadenamiento",
         ondelete="restrict",
-    )"""
+    )
     model = fields.Char(readonly=True)
     document_id = fields.Many2one(
         "account.invoice",
@@ -148,11 +148,11 @@ class VerifactuInvoiceEntry(models.Model):
                 """
                 SELECT id FROM verifactu_invoice_entry AS vsq
                 WHERE vsq.send_state in ('not_sent', 'incorrect')
-                AND vsq.company_id = %s
+                AND vsq.company_id = %s AND vsq.verifactu_developer_id = %s
                 ORDER BY id
                 FOR UPDATE NOWAIT
                 """,
-                [company.id],  # Always use a list or tuple here
+                [company.id, company.verifactu_developer_id.id],  # Always use a list or tuple here
             )
             records_to_send = self.browse(r[0] for r in self.env.cr.fetchall())
             send_date = datetime.now() 
