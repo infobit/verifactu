@@ -17,6 +17,7 @@
                             <field name="installation_number"/>
                             <field name="version"/>
                             <field name="responsibility_declaration"/>
+                            <field name="last_verifactu_invoice_entry_id"/>
                         </group>
                     </group>
                  </form>

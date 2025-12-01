@@ -165,7 +165,7 @@ class account_invoice(models.Model):
         copy=False,
     )
 
-    @api.multi
+    """@api.multi
     def action_cancel(self):
         res = super(account_invoice, self).action_cancel()
         if self.state not in ['draft', 'proforma', 'proforma2'] and self.verifactu_enabled:
@@ -174,7 +174,7 @@ class account_invoice(models.Model):
                    _("La factura no se puede cancelar, ni modificar"))
            return
         else: 
-           return res
+           return res"""
 
     @api.model
     def _selection_verifactu_reference_models(self):
@@ -351,10 +351,15 @@ class account_invoice(models.Model):
         self.ensure_one()
         try:
             with self.env.cr.savepoint():
-                self.env.cr.execute(
+                """self.env.cr.execute(
                     "SELECT last_verifactu_invoice_entry_id FROM"
                     " res_company WHERE id = %s FOR UPDATE NOWAIT",
                     [self.company_id.id],
+                )"""
+                self.env.cr.execute(
+                    "SELECT last_verifactu_invoice_entry_id FROM"
+                    " verifactu_developer WHERE id = %s FOR UPDATE NOWAIT",
+                    [self.company_id.verifactu_developer_id.id],
                 )
                 result = self.env.cr.fetchone()
                 previous_invoice_entry_id = result[0] if result and result[0] else False
@@ -382,12 +387,20 @@ class account_invoice(models.Model):
                 inv_dict = self._get_verifactu_invoice_dict()
                 invoice_entry.document_hash = hash_string.hexdigest().upper()
                 invoice_entry.aeat_json_data = json.dumps(inv_dict, indent=4)
-                self.env.cr.execute(
+                """self.env.cr.execute(
                     "UPDATE res_company SET "
-                    "last_verifactu_invoice_entry_id = %s"
+                    "last_verifactu_invoice_entry_id = %s "
                     "WHERE id = %s",
                     [invoice_entry.id, self.company_id.id],
+                )"""
+                self.env.cr.execute(
+                    "UPDATE verifactu_developer SET "
+                    "last_verifactu_invoice_entry_id = %s"
+                    "WHERE id = %s",
+                    [invoice_entry.id, invoice_entry.verifactu_developer_id.id],
                 )
+                #result1 = self.env.cr.fetchone()
+                #raise Warning(invoice_entry.verifactu_developer_id.last_verifactu_invoice_entry_id.document_hash)
         except psycopg2.OperationalError as err:
             if err.pgcode == "55P03":  # could not obtain the lock
                 raise ValidationError(

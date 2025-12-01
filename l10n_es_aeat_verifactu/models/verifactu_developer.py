@@ -16,3 +16,9 @@ class VerifactuDeveloper(models.Model):
     responsibility_declaration = fields.Binary(
         attachment=True, copy=False, tracking=True
     )
+    last_verifactu_invoice_entry_id = fields.Many2one(
+        "verifactu.invoice.entry",
+        string="VeriFactu Invoice Entry",
+        #readonly=True,
+        copy=False,
+    )
