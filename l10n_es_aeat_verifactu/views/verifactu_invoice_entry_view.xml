@@ -29,7 +29,7 @@
                 <sheet>
                     <group>
                         <group>
-                            <!--<field name="verifactu_chaining_id" />-->
+                            <field name="verifactu_developer_id" />
                             <field name="document_id" />
                             <field
                                 name="company_id"
